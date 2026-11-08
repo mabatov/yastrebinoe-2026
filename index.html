@@ -17,7 +17,21 @@ try {
 :root[data-theme="light"]{color-scheme:light;--bg:#f1eee4;--panel:#faf7ed;--panel2:#e9e8db;--text:#242d24;--muted:#49574b;--line:#aeb4a4;--accent:#99490f;--ink:#fffaf0;--grid:#596c4b43;--map:#e2e7d6;--mapline:#78886b;--note:#ba650b13}
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:20px}
-body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,sans-serif}
+body{position:relative;isolation:isolate;margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,sans-serif}
+:root{--contour-edge:#adc09f29;--contour-center:#adc09f0c}
+:root[data-theme="light"]{--contour-edge:#57644a22;--contour-center:#57644a0b}
+body::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:linear-gradient(90deg,var(--contour-edge),var(--contour-center) 28%,var(--contour-center) 72%,var(--contour-edge));
+  mask:url("./topographic-contours.svg") center top / 860px 720px repeat;
+}
+@media(max-width:540px){
+  body::before{mask-size:640px auto}
+}
 a{color:inherit;text-underline-offset:4px}
 button,input{font:inherit}
 button{cursor:pointer}

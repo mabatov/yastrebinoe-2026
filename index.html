@@ -966,6 +966,7 @@ function showMapFallback(message) {
 }
 if (window.L) {
   liveMap = L.map(mapHost, {zoomControl:false, scrollWheelZoom:true, minZoom:9, maxZoom:19});
+  liveMap.attributionControl.setPrefix(false);
   const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom:19,
     attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'

@@ -194,7 +194,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
     <div class="hero-tag">61°09′49.6″ N · 29°43′12.2″ E</div>
   </div>
   <div class="stats" aria-label="Маршрут в цифрах">
-    <div class="stat"><strong>12,01 км</strong><span class="stat-label">Пешком до стоянки</span></div>
+    <div class="stat"><strong>11,69 км</strong><span class="stat-label">Пешком до стоянки</span></div>
     <div class="stat"><strong>5–6 ч</strong><span class="stat-label">Ориентир в пути</span></div>
     <div class="stat"><strong>1 126 ₽</strong><span class="stat-label">Электрички туда и обратно</span></div>
   </div>
@@ -233,7 +233,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
     <div class="section-head">
       <div><span class="index">02 / Пешие маршруты</span><h2 id="track-title">От станции до стоянки</h2></div>
       <button class="button gpx" id="outbound-download" type="button">Скачать GPX <span aria-hidden="true">↓</span></button>
-      <a class="button" id="return-download" href="./Gornyak-Kuznechnoe-12km.gpx" download hidden>Скачать GPX обратно <span aria-hidden="true">↓</span></a>
+      <a class="button" id="return-download" href="./Gornyak-Kuznechnoe-Spartak.gpx" download hidden>Скачать GPX обратно <span aria-hidden="true">↓</span></a>
     </div>
     <div class="map-directions" aria-label="Направление маршрута">
       <button class="button" id="outbound-map" type="button" aria-pressed="true">Туда · ночь 13/14 ноября</button>
@@ -284,7 +284,8 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
         <div class="point-detail" id="point-detail" aria-live="polite"><strong>Кузнечное</strong><p>Собираемся после выхода из электрички и идём всей группой.</p></div>
       </aside>
     </div>
-    <p class="callout"><strong>У карьера.</strong> Проход пока не подтверждён. Если он закрыт, оба GPX не дают обхода. Между стоянкой и нанесённой линией около 25 м, подход определим на месте.</p>
+    <p class="callout"><strong>У Пестово.</strong> Основной маршрут туда и обратно идёт по восточной стороне озера через массив «Спартак». Запасной обход согласуем с куратором. <a href="./Kuznechnoe-Gornyak-12.01km-no-marked-ford.gpx" download>Скачать запасной GPX · западный берег ↓</a></p>
+    <p class="callout"><strong>У карьера.</strong> Проход пока не подтверждён. Если он закрыт, в этих GPX обхода карьера нет.</p>
   </section>
 
   <section id="return">
@@ -295,7 +296,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
         <h3>Стоянка «Горняк» → Кузнечное</h3>
         <div class="hero-actions">
           <a class="button primary" id="show-return-map" href="#track">Обратный маршрут на карте</a>
-          <a class="button" href="./Gornyak-Kuznechnoe-12km.gpx" download>Скачать GPX обратно ↓</a>
+          <a class="button" href="./Gornyak-Kuznechnoe-Spartak.gpx" download>Скачать GPX обратно ↓</a>
         </div>
       </div>
       <p>После утренней тренировки выходим со стоянки в <strong>13:00</strong> и идём вместе по Хошиминке. Цель — быть на станции к <strong>17:30</strong>, за 40 минут до электрички <strong>18:10</strong>. При переходе за 5 часов останется 10 минут запаса.</p>
@@ -318,8 +319,8 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
 <?xml version='1.0' encoding='utf-8'?>
 <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Codex / OpenStreetMap graph shortest-path calculation">
   <metadata>
-    <name>Кузнечное → Горняк | без отмеченного брода | 12,01 км</name>
-    <desc>Расчёт по сети дорог и троп OSM, 08.11.2026. Длина линии 12.012 км. Карьерный проход не подтверждён. Конец линии на нанесённой тропе в 24.7 м от точной стоянки; последние метры не прорисованы. Физическая маркировка и текущее состояние троп не проверены.</desc>
+    <name>Кузнечное → Горняк | через Спартак | 11,69 км</name>
+    <desc>Подход по Хошиминке построен по данным OpenStreetMap. От развилки у Пестово до стоянки «Горняк» использован фрагмент GPX куратора через массив «Спартак». Проход через карьер на дату похода пока не подтверждён.</desc>
     <copyright author="OpenStreetMap contributors">
       <license>https://opendatacommons.org/licenses/odbl/1-0/</license>
     </copyright>
@@ -344,17 +345,17 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
   </wpt>
   <wpt lat="61.1520166" lon="29.7387683">
     <name>04 Развилка перед Пестово</name>
-    <desc>Здесь расходятся кратчайший вариант с бродом и вариант без отмеченного брода.</desc>
+    <desc>Основной маршрут идёт по восточной стороне Пестово через массив «Спартак».</desc>
     <sym>Flag, Blue</sym>
   </wpt>
-  <wpt lat="61.1639919" lon="29.7198802">
-    <name>06 Конец нанесённой линии — до цели 25 м</name>
-    <desc>Здесь заканчивается линия GPX. Точная стоянка расположена отдельно; соединяющей тропы в OSM нет.</desc>
-    <sym>Flag, Blue</sym>
+  <wpt lat="61.1620470" lon="29.7270610">
+    <name>05 Спартак — отмеченный брод | 10,99 км</name>
+    <desc>Переправа отмечена в OpenStreetMap. Состояние прохода уточняем на месте.</desc>
+    <sym>Danger Area</sym>
   </wpt>
-  <wpt lat="61.1637860" lon="29.7200530">
-    <name>07 Финиш — Горняк, точка пользователя</name>
-    <desc>61.163786,29.720053. Совпадает с меткой Горняк OSM с расхождением менее 0,2 м. Последние 24,7 м по прямой не являются подтверждённой тропой.</desc>
+  <wpt lat="61.1637850" lon="29.7200520">
+    <name>06 Финиш — стоянка «Горняк»</name>
+    <desc>Конечная точка трека куратора.</desc>
     <sym>Campground</sym>
   </wpt>
   <wpt lat="61.1304708" lon="29.8096088">
@@ -382,7 +383,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
     <type>Резервный привал</type>
   </wpt>
   <trk>
-    <name>Кузнечное → Горняк | без отмеченного брода | 12,01 км</name>
+    <name>Кузнечное → Горняк | через Спартак | 11,69 км</name>
     <desc>Линия только по нанесённым дорогам и тропам. Точная стоянка — отдельная точка.</desc>
     <type>hiking</type>
     <trkseg>
@@ -705,158 +706,105 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
       <trkpt lat="61.1515841" lon="29.7403010" />
       <trkpt lat="61.1517294" lon="29.7400834" />
       <trkpt lat="61.1520166" lon="29.7387683" />
-      <trkpt lat="61.1520007" lon="29.7384564" />
-      <trkpt lat="61.1519941" lon="29.7381984" />
-      <trkpt lat="61.1518881" lon="29.7378483" />
-      <trkpt lat="61.1518954" lon="29.7375952" />
-      <trkpt lat="61.1519117" lon="29.7372572" />
-      <trkpt lat="61.1518637" lon="29.7369505" />
-      <trkpt lat="61.1519010" lon="29.7364457" />
-      <trkpt lat="61.1519648" lon="29.7359415" />
-      <trkpt lat="61.1520317" lon="29.7354903" />
-      <trkpt lat="61.1519976" lon="29.7350957" />
-      <trkpt lat="61.1519780" lon="29.7347499" />
-      <trkpt lat="61.1521087" lon="29.7340889" />
-      <trkpt lat="61.1522749" lon="29.7336209" />
-      <trkpt lat="61.1523098" lon="29.7331501" />
-      <trkpt lat="61.1523088" lon="29.7325119" />
-      <trkpt lat="61.1522480" lon="29.7319273" />
-      <trkpt lat="61.1522889" lon="29.7313813" />
-      <trkpt lat="61.1523017" lon="29.7309120" />
-      <trkpt lat="61.1522022" lon="29.7301612" />
-      <trkpt lat="61.1521955" lon="29.7298007" />
-      <trkpt lat="61.1521871" lon="29.7292665" />
-      <trkpt lat="61.1522020" lon="29.7288129" />
-      <trkpt lat="61.1521889" lon="29.7283524" />
-      <trkpt lat="61.1522330" lon="29.7278105" />
-      <trkpt lat="61.1523033" lon="29.7273804" />
-      <trkpt lat="61.1523915" lon="29.7270045" />
-      <trkpt lat="61.1526235" lon="29.7264898" />
-      <trkpt lat="61.1528180" lon="29.7261579" />
-      <trkpt lat="61.1528572" lon="29.7258531" />
-      <trkpt lat="61.1529438" lon="29.7255551" />
-      <trkpt lat="61.1531293" lon="29.7253066" />
-      <trkpt lat="61.1533804" lon="29.7248581" />
-      <trkpt lat="61.1535479" lon="29.7245262" />
-      <trkpt lat="61.1537299" lon="29.7238620" />
-      <trkpt lat="61.1538588" lon="29.7237138" />
-      <trkpt lat="61.1542673" lon="29.7235411" />
-      <trkpt lat="61.1544127" lon="29.7235445" />
-      <trkpt lat="61.1544878" lon="29.7236359" />
-      <trkpt lat="61.1545138" lon="29.7236458" />
-      <trkpt lat="61.1546064" lon="29.7234558" />
-      <trkpt lat="61.1546198" lon="29.7233264" />
-      <trkpt lat="61.1546926" lon="29.7231970" />
-      <trkpt lat="61.1549230" lon="29.7230368" />
-      <trkpt lat="61.1550940" lon="29.7228396" />
-      <trkpt lat="61.1551752" lon="29.7227245" />
-      <trkpt lat="61.1552008" lon="29.7224775" />
-      <trkpt lat="61.1551985" lon="29.7223764" />
-      <trkpt lat="61.1553635" lon="29.7219927" />
-      <trkpt lat="61.1554400" lon="29.7217406" />
-      <trkpt lat="61.1554537" lon="29.7216471" />
-      <trkpt lat="61.1554988" lon="29.7214683" />
-      <trkpt lat="61.1555459" lon="29.7212609" />
-      <trkpt lat="61.1556381" lon="29.7211186" />
-      <trkpt lat="61.1556557" lon="29.7210414" />
-      <trkpt lat="61.1556690" lon="29.7210935" />
-      <trkpt lat="61.1558192" lon="29.7209588" />
-      <trkpt lat="61.1558260" lon="29.7208903" />
-      <trkpt lat="61.1558977" lon="29.7207133" />
-      <trkpt lat="61.1560497" lon="29.7205576" />
-      <trkpt lat="61.1560787" lon="29.7204762" />
-      <trkpt lat="61.1560855" lon="29.7203205" />
-      <trkpt lat="61.1560941" lon="29.7201860" />
-      <trkpt lat="61.1561726" lon="29.7200586" />
-      <trkpt lat="61.1562528" lon="29.7199453" />
-      <trkpt lat="61.1563160" lon="29.7198674" />
-      <trkpt lat="61.1564065" lon="29.7196728" />
-      <trkpt lat="61.1564625" lon="29.7194728" />
-      <trkpt lat="61.1565348" lon="29.7193791" />
-      <trkpt lat="61.1565854" lon="29.7192526" />
-      <trkpt lat="61.1566618" lon="29.7190290" />
-      <trkpt lat="61.1567682" lon="29.7187890" />
-      <trkpt lat="61.1568207" lon="29.7187972" />
-      <trkpt lat="61.1569050" lon="29.7187078" />
-      <trkpt lat="61.1569953" lon="29.7186997" />
-      <trkpt lat="61.1570757" lon="29.7186265" />
-      <trkpt lat="61.1571561" lon="29.7185711" />
-      <trkpt lat="61.1572365" lon="29.7185113" />
-      <trkpt lat="61.1573251" lon="29.7183880" />
-      <trkpt lat="61.1573837" lon="29.7181960" />
-      <trkpt lat="61.1574173" lon="29.7181033" />
-      <trkpt lat="61.1574650" lon="29.7179365" />
-      <trkpt lat="61.1575047" lon="29.7177516" />
-      <trkpt lat="61.1575761" lon="29.7175380" />
-      <trkpt lat="61.1576613" lon="29.7173490" />
-      <trkpt lat="61.1577425" lon="29.7172463" />
-      <trkpt lat="61.1578563" lon="29.7171958" />
-      <trkpt lat="61.1579554" lon="29.7173231" />
-      <trkpt lat="61.1581166" lon="29.7178264" />
-      <trkpt lat="61.1583092" lon="29.7179650" />
-      <trkpt lat="61.1584401" lon="29.7180031" />
-      <trkpt lat="61.1585946" lon="29.7180139" />
-      <trkpt lat="61.1587667" lon="29.7179658" />
-      <trkpt lat="61.1588448" lon="29.7178523" />
-      <trkpt lat="61.1589479" lon="29.7176475" />
-      <trkpt lat="61.1590407" lon="29.7174360" />
-      <trkpt lat="61.1591507" lon="29.7172686" />
-      <trkpt lat="61.1592529" lon="29.7172761" />
-      <trkpt lat="61.1593144" lon="29.7174820" />
-      <trkpt lat="61.1594205" lon="29.7177206" />
-      <trkpt lat="61.1594935" lon="29.7177993" />
-      <trkpt lat="61.1595750" lon="29.7178461" />
-      <trkpt lat="61.1596856" lon="29.7180710" />
-      <trkpt lat="61.1597530" lon="29.7181778" />
-      <trkpt lat="61.1598306" lon="29.7182547" />
-      <trkpt lat="61.1599272" lon="29.7183048" />
-      <trkpt lat="61.1600221" lon="29.7183370" />
-      <trkpt lat="61.1600823" lon="29.7183224" />
-      <trkpt lat="61.1601361" lon="29.7183049" />
-      <trkpt lat="61.1600921" lon="29.7186493" />
-      <trkpt lat="61.1601401" lon="29.7187360" />
-      <trkpt lat="61.1601612" lon="29.7188134" />
-      <trkpt lat="61.1602943" lon="29.7188612" />
-      <trkpt lat="61.1605505" lon="29.7188934" />
-      <trkpt lat="61.1607109" lon="29.7188022" />
-      <trkpt lat="61.1607599" lon="29.7188480" />
-      <trkpt lat="61.1608415" lon="29.7188089" />
-      <trkpt lat="61.1611134" lon="29.7186064" />
-      <trkpt lat="61.1614673" lon="29.7181803" />
-      <trkpt lat="61.1614832" lon="29.7181074" />
-      <trkpt lat="61.1615037" lon="29.7179355" />
-      <trkpt lat="61.1615368" lon="29.7177995" />
-      <trkpt lat="61.1616848" lon="29.7175134" />
-      <trkpt lat="61.1617685" lon="29.7173960" />
-      <trkpt lat="61.1617386" lon="29.7172979" />
-      <trkpt lat="61.1617819" lon="29.7171743" />
-      <trkpt lat="61.1619399" lon="29.7166939" />
-      <trkpt lat="61.1620695" lon="29.7165414" />
-      <trkpt lat="61.1621604" lon="29.7164582" />
-      <trkpt lat="61.1622304" lon="29.7162683" />
-      <trkpt lat="61.1623519" lon="29.7161665" />
-      <trkpt lat="61.1625261" lon="29.7160786" />
-      <trkpt lat="61.1626704" lon="29.7161096" />
-      <trkpt lat="61.1628410" lon="29.7161573" />
-      <trkpt lat="61.1630336" lon="29.7162465" />
-      <trkpt lat="61.1630993" lon="29.7162967" />
-      <trkpt lat="61.1632209" lon="29.7164468" />
-      <trkpt lat="61.1633288" lon="29.7166324" />
-      <trkpt lat="61.1633688" lon="29.7167635" />
-      <trkpt lat="61.1633999" lon="29.7168305" />
-      <trkpt lat="61.1634680" lon="29.7169598" />
-      <trkpt lat="61.1635881" lon="29.7173222" />
-      <trkpt lat="61.1636760" lon="29.7175702" />
-      <trkpt lat="61.1637358" lon="29.7178432" />
-      <trkpt lat="61.1637782" lon="29.7181069" />
-      <trkpt lat="61.1638102" lon="29.7182915" />
-      <trkpt lat="61.1638277" lon="29.7185427" />
-      <trkpt lat="61.1638587" lon="29.7188174" />
-      <trkpt lat="61.1638586" lon="29.7190400" />
-      <trkpt lat="61.1638747" lon="29.7193057" />
-      <trkpt lat="61.1639066" lon="29.7195088" />
-      <trkpt lat="61.1639682" lon="29.7197588" />
-      <trkpt lat="61.1639919" lon="29.7198802" />
+      <trkpt lat="61.1521690" lon="29.7383610" />
+      <trkpt lat="61.1523700" lon="29.7382270" />
+      <trkpt lat="61.1525620" lon="29.7379510" />
+      <trkpt lat="61.1527390" lon="29.7376050" />
+      <trkpt lat="61.1530240" lon="29.7371970" />
+      <trkpt lat="61.1532250" lon="29.7370980" />
+      <trkpt lat="61.1536030" lon="29.7371890" />
+      <trkpt lat="61.1540610" lon="29.7370120" />
+      <trkpt lat="61.1541810" lon="29.7371220" />
+      <trkpt lat="61.1544210" lon="29.7370680" />
+      <trkpt lat="61.1547080" lon="29.7367540" />
+      <trkpt lat="61.1548910" lon="29.7368050" />
+      <trkpt lat="61.1553850" lon="29.7362820" />
+      <trkpt lat="61.1558010" lon="29.7358450" />
+      <trkpt lat="61.1561060" lon="29.7352440" />
+      <trkpt lat="61.1561230" lon="29.7346780" />
+      <trkpt lat="61.1562470" lon="29.7343190" />
+      <trkpt lat="61.1568530" lon="29.7341150" />
+      <trkpt lat="61.1571330" lon="29.7340450" />
+      <trkpt lat="61.1573640" lon="29.7338740" />
+      <trkpt lat="61.1579670" lon="29.7331170" />
+      <trkpt lat="61.1581530" lon="29.7329000" />
+      <trkpt lat="61.1583170" lon="29.7328650" />
+      <trkpt lat="61.1587090" lon="29.7327740" />
+      <trkpt lat="61.1595620" lon="29.7327770" />
+      <trkpt lat="61.1597990" lon="29.7328840" />
+      <trkpt lat="61.1599090" lon="29.7330020" />
+      <trkpt lat="61.1601000" lon="29.7330500" />
+      <trkpt lat="61.1602610" lon="29.7328890" />
+      <trkpt lat="61.1603360" lon="29.7327470" />
+      <trkpt lat="61.1605800" lon="29.7325190" />
+      <trkpt lat="61.1606930" lon="29.7323290" />
+      <trkpt lat="61.1607780" lon="29.7319910" />
+      <trkpt lat="61.1608920" lon="29.7316210" />
+      <trkpt lat="61.1609640" lon="29.7312850" />
+      <trkpt lat="61.1609350" lon="29.7311620" />
+      <trkpt lat="61.1609200" lon="29.7310550" />
+      <trkpt lat="61.1609590" lon="29.7310060" />
+      <trkpt lat="61.1610740" lon="29.7309450" />
+      <trkpt lat="61.1611250" lon="29.7308110" />
+      <trkpt lat="61.1611810" lon="29.7306010" />
+      <trkpt lat="61.1612180" lon="29.7304970" />
+      <trkpt lat="61.1614480" lon="29.7302390" />
+      <trkpt lat="61.1616510" lon="29.7301830" />
+      <trkpt lat="61.1616630" lon="29.7297940" />
+      <trkpt lat="61.1616760" lon="29.7296410" />
+      <trkpt lat="61.1617380" lon="29.7294640" />
+      <trkpt lat="61.1617900" lon="29.7290620" />
+      <trkpt lat="61.1618740" lon="29.7284690" />
+      <trkpt lat="61.1619110" lon="29.7278570" />
+      <trkpt lat="61.1619750" lon="29.7271090" />
+      <trkpt lat="61.1620470" lon="29.7270610" />
+      <trkpt lat="61.1620910" lon="29.7270310" />
+      <trkpt lat="61.1622630" lon="29.7268600" />
+      <trkpt lat="61.1625070" lon="29.7267850" />
+      <trkpt lat="61.1627330" lon="29.7264900" />
+      <trkpt lat="61.1628700" lon="29.7263180" />
+      <trkpt lat="61.1629170" lon="29.7259240" />
+      <trkpt lat="61.1630650" lon="29.7255800" />
+      <trkpt lat="61.1630720" lon="29.7255670" />
+      <trkpt lat="61.1632170" lon="29.7254620" />
+      <trkpt lat="61.1632080" lon="29.7252880" />
+      <trkpt lat="61.1632760" lon="29.7251220" />
+      <trkpt lat="61.1633940" lon="29.7250410" />
+      <trkpt lat="61.1635030" lon="29.7249470" />
+      <trkpt lat="61.1636260" lon="29.7248160" />
+      <trkpt lat="61.1637370" lon="29.7246920" />
+      <trkpt lat="61.1638140" lon="29.7245070" />
+      <trkpt lat="61.1638930" lon="29.7243630" />
+      <trkpt lat="61.1641460" lon="29.7241080" />
+      <trkpt lat="61.1641960" lon="29.7238180" />
+      <trkpt lat="61.1645740" lon="29.7233730" />
+      <trkpt lat="61.1646790" lon="29.7230970" />
+      <trkpt lat="61.1647850" lon="29.7228470" />
+      <trkpt lat="61.1648950" lon="29.7221600" />
+      <trkpt lat="61.1650070" lon="29.7218410" />
+      <trkpt lat="61.1650710" lon="29.7216780" />
+      <trkpt lat="61.1651420" lon="29.7215760" />
+      <trkpt lat="61.1651910" lon="29.7215380" />
+      <trkpt lat="61.1652120" lon="29.7214660" />
+      <trkpt lat="61.1652350" lon="29.7213340" />
+      <trkpt lat="61.1652210" lon="29.7212460" />
+      <trkpt lat="61.1652000" lon="29.7211220" />
+      <trkpt lat="61.1651480" lon="29.7209700" />
+      <trkpt lat="61.1650860" lon="29.7208350" />
+      <trkpt lat="61.1650070" lon="29.7207360" />
+      <trkpt lat="61.1648510" lon="29.7206340" />
+      <trkpt lat="61.1647410" lon="29.7206180" />
+      <trkpt lat="61.1646040" lon="29.7206500" />
+      <trkpt lat="61.1644990" lon="29.7206770" />
+      <trkpt lat="61.1644460" lon="29.7206530" />
+      <trkpt lat="61.1643200" lon="29.7205830" />
+      <trkpt lat="61.1642470" lon="29.7205380" />
+      <trkpt lat="61.1641720" lon="29.7204380" />
+      <trkpt lat="61.1641060" lon="29.7202860" />
+      <trkpt lat="61.1640530" lon="29.7201190" />
+      <trkpt lat="61.1640020" lon="29.7199340" />
+      <trkpt lat="61.1639920" lon="29.7198810" />
+      <trkpt lat="61.1637850" lon="29.7200520" />
     </trkseg>
   </trk>
 </gpx>
@@ -950,17 +898,20 @@ const readPoints = name => [...gpxDocument.getElementsByTagName(name)].map(point
   [Number(point.getAttribute('lat')), Number(point.getAttribute('lon'))]);
 const outboundTrack = readPoints('trkpt');
 const waypoints = readPoints('wpt');
-const totalKm = 12.012;
+const totalKm = outboundTrack.slice(1).reduce((sum, point, index) => sum + segmentKm(outboundTrack[index], point), 0);
+const fordKm = 10.986;
 const outboundPoints = [
   {tag:'С',title:'Кузнечное',km:0,coordinates:waypoints[0],description:'Собираемся после выхода из электрички и идём всей группой.'},
   {tag:'!',title:'Вход в район карьера',km:3.08,coordinates:waypoints[1],description:'На этом участке проверяем, открыт ли проход. Он пока не подтверждён для ночи 13/14 ноября.'},
   {tag:'П1',title:'После карьера',km:4.39,rest:5,coordinates:waypoints[6],description:'Короткий привал на 5 минут. Подходящую площадку выбираем на месте.'},
   {tag:'П2',title:'Место отдыха',km:6.84,rest:8,coordinates:waypoints[7],description:'Основной привал на 7–10 минут. Проверим, как чувствует себя группа.'},
   {tag:'П3',title:'У Двинского',km:9.4,coordinates:waypoints[8],description:'Запасной привал на 5 минут по состоянию группы. Время этой остановки в бегунок не заложено.'},
-  {tag:'Ф',title:'Стоянка «Горняк»',km:totalKm,coordinates:waypoints[5],description:'Точка стоянки отмечена отдельно. До неё около 25 м от конца линии GPX.'}
+  {tag:'Б',title:'Брод у Спартака',km:fordKm,coordinates:waypoints[4],description:'По плану идём восточнее Пестово через массив «Спартак». Здесь в OSM отмечен брод.'},
+  {tag:'Ф',title:'Стоянка «Горняк»',km:totalKm,coordinates:waypoints[5],description:'Финиш у стоянки по треку куратора.'}
 ];
 const returnPoints = [
-  {tag:'С',title:'Стоянка «Горняк»',km:0,coordinates:waypoints[5],description:'Выходим в 13:00 МСК. Начало нанесённой линии примерно в 25 м от стоянки.'},
+  {tag:'С',title:'Стоянка «Горняк»',km:0,coordinates:waypoints[5],description:'Выходим со стоянки в 13:00 МСК.'},
+  {tag:'Б',title:'Брод у Спартака',km:totalKm-fordKm,coordinates:waypoints[4],description:'По плану идём восточнее Пестово через массив «Спартак». Здесь в OSM отмечен брод.'},
   {tag:'П3',title:'У Двинского',km:totalKm-9.4,coordinates:waypoints[8],description:'Запасной привал на 5 минут, если нужен группе. Время остановки в бегунок не заложено.'},
   {tag:'П2',title:'Место отдыха',km:totalKm-6.84,rest:8,coordinates:waypoints[7],description:'Привал на 7–10 минут по состоянию группы и графику.'},
   {tag:'П1',title:'Перед карьером',km:totalKm-4.39,rest:5,coordinates:waypoints[6],description:'Короткая остановка. Проверяем, открыт ли проход со стороны леса.'},
@@ -977,7 +928,7 @@ for (const button of document.querySelectorAll('.gpx')) {
     const url = URL.createObjectURL(new Blob([gpx], {type:'application/gpx+xml'}));
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = 'Kuznechnoe-Gornyak-12km.gpx';
+    anchor.download = 'Kuznechnoe-Gornyak-Spartak.gpx';
     document.body.append(anchor);
     anchor.click();
     anchor.remove();

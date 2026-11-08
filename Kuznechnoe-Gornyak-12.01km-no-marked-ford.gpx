@@ -1,8 +1,7 @@
-/opt/homebrew/Library/Homebrew/cmd/shellenv.sh: line 18: /bin/ps: Operation not permitted
 <?xml version='1.0' encoding='utf-8'?>
 <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Codex / OpenStreetMap graph shortest-path calculation">
   <metadata>
-    <name>Кузнечное → Горняк | без отмеченного брода | 12,01 км</name>
+    <name>Кузнечное → Горняк | запасной западный обход | 12,01 км</name>
     <desc>Расчёт по сети дорог и троп OSM, 08.11.2026. Длина линии 12.012 км. Карьерный проход не подтверждён. Конец линии на нанесённой тропе в 24.7 м от точной стоянки; последние метры не прорисованы. Физическая маркировка и текущее состояние троп не проверены.</desc>
     <copyright author="OpenStreetMap contributors">
       <license>https://opendatacommons.org/licenses/odbl/1-0/</license>
@@ -28,7 +27,7 @@
   </wpt>
   <wpt lat="61.1520166" lon="29.7387683">
     <name>04 Развилка перед Пестово</name>
-    <desc>Здесь расходятся кратчайший вариант с бродом и вариант без отмеченного брода.</desc>
+    <desc>Запасной маршрут идёт по западной стороне Пестово. Выбор обхода согласуем с куратором.</desc>
     <sym>Flag, Blue</sym>
   </wpt>
   <wpt lat="61.1639919" lon="29.7198802">
@@ -66,7 +65,7 @@
     <type>Резервный привал</type>
   </wpt>
   <trk>
-    <name>Кузнечное → Горняк | без отмеченного брода | 12,01 км</name>
+    <name>Кузнечное → Горняк | запасной западный обход | 12,01 км</name>
     <desc>Линия только по нанесённым дорогам и тропам. Точная стоянка — отдельная точка.</desc>
     <type>hiking</type>
     <trkseg>

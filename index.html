@@ -1,0 +1,1093 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#171e19" id="theme-color">
+<meta name="description" content="Электрички, карта пешего маршрута и GPX для ноябрьского выезда на Ястребиное. 13–15 ноября 2026.">
+<title>Ястребиное · Дорога на выезд</title>
+<script>
+try {
+  if (localStorage.getItem('yastrebinoe-theme') === 'light') document.documentElement.dataset.theme = 'light';
+} catch {}
+</script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3ynhMJBwF4R11Sm+I1ebfF5upI3Bw=" crossorigin="">
+<style>
+:root{color-scheme:dark;--bg:#171e19;--panel:#1e2820;--panel2:#252f25;--text:#f3f0dc;--muted:#b1baaa;--line:#455246;--accent:#ffc367;--ink:#271e11;--grid:#9aad8840;--map:#242f26;--mapline:#788a72;--note:#ffc36712;--radius:14px;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+:root[data-theme="light"]{color-scheme:light;--bg:#f1eee4;--panel:#faf7ed;--panel2:#e9e8db;--text:#242d24;--muted:#49574b;--line:#aeb4a4;--accent:#99490f;--ink:#fffaf0;--grid:#596c4b43;--map:#e2e7d6;--mapline:#78886b;--note:#ba650b13}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,sans-serif}
+a{color:inherit;text-underline-offset:4px}
+button,input{font:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+[hidden]{display:none!important}
+.wrap{width:min(1120px,100% - 48px);margin-inline:auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:17px 0;border-bottom:1px solid var(--line)}
+.brand,.eyebrow,.index,.badge,.stat-label,.date,.point-number,.map-caption,.range-label,.train-number{font:650 11px/1.4 var(--mono);letter-spacing:.09em;text-transform:uppercase}
+.brand{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--muted)}
+.brand svg{width:28px;height:28px;color:var(--accent)}
+.topbar nav{display:flex;gap:24px;font-size:14px}
+.topbar nav a{text-decoration:none;color:var(--muted)}
+.topbar nav a:hover{color:var(--text)}
+.button,.theme,.map-toggle{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 15px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);text-decoration:none;font-weight:650;font-size:14px}
+.button:hover,.theme:hover,.map-toggle:hover{border-color:var(--accent)}
+.button svg,.theme svg{width:18px;height:18px;flex:none}
+.button.primary{background:var(--accent);border-color:var(--accent);color:var(--ink)}
+.hero{position:relative;isolation:isolate;overflow:hidden;margin-top:20px;padding:clamp(28px,6vw,72px);min-height:350px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
+#contours{position:absolute;inset:0;width:100%;height:100%;z-index:-2;color:var(--mapline)}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,var(--panel) 4%,var(--panel) 30%,transparent 87%);opacity:.95}
+.eyebrow,.index{color:var(--accent)}
+h1,h2,h3,p{margin:0}
+h1{font-size:clamp(42px,8vw,96px);line-height:.98;letter-spacing:-.075em;margin:18px 0 16px;font-weight:850}
+h2{font-size:clamp(27px,5vw,49px);line-height:1.05;letter-spacing:-.045em}
+h3{line-height:1.2}
+.hero p{color:var(--muted);max-width:430px;font-size:clamp(16px,2vw,19px)}
+.hero-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:25px}
+.hero-tag{position:absolute;right:20px;bottom:16px;color:var(--muted);font:10px var(--mono);letter-spacing:.1em}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:var(--radius);margin-top:12px;background:var(--panel)}
+.stat{padding:16px clamp(10px,3vw,28px)}
+.stat+.stat{border-left:1px solid var(--line)}
+.stat strong{display:block;font-size:clamp(19px,4vw,33px);line-height:1.2;letter-spacing:-.045em;font-variant-numeric:tabular-nums}
+.stat-label{display:block;margin-top:5px;color:var(--muted)}
+section{margin-top:clamp(34px,7vw,72px)}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:17px}
+.section-head .index{display:block;margin-bottom:6px}
+.section-head p,.muted{color:var(--muted)}
+.train-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(16px,3vw,25px)}
+.card header{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:15px}
+.date{color:var(--muted)}
+.train-number{color:var(--accent)}
+.train-leg{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:12px;align-items:start}
+.train-leg time{font:750 clamp(23px,4.2vw,41px)/1 var(--mono);letter-spacing:-.08em}
+.train-leg .arrow{color:var(--accent);font-size:24px;line-height:1.1}
+.train-leg span.station{display:block;font-size:14px;margin-top:5px}
+.train-foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px;margin-top:18px;padding-top:13px;border-top:1px solid var(--line);font-size:13px}
+.train-foot a,.map-caption a{color:var(--muted)}
+.after-train{margin-top:11px;font-size:14px;color:var(--muted)}
+details{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin-top:12px}
+summary{cursor:pointer;padding:12px 16px;font-weight:650}
+.stops{padding:0 16px 12px;margin:0;list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 20px}
+.stops li{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-top:1px solid var(--line);font-size:13px}
+.stops time{font-family:var(--mono);color:var(--muted)}
+.map-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(260px,1fr);gap:12px;align-items:start}
+.map-card,.points-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.map-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line)}
+.map-caption{color:var(--muted)}
+.map-toggle{font-size:12px;padding:5px 8px}
+.map-stage{position:relative;height:clamp(265px,39vw,435px);background:var(--map)}
+#map,#schematic{width:100%;height:100%;position:absolute;inset:0}
+#schematic{display:block}
+.map-marker{cursor:pointer}
+.map-marker text{font:700 14px var(--mono);fill:var(--text);paint-order:stroke;stroke:var(--map);stroke-width:4;stroke-linejoin:round}
+.map-marker circle{fill:var(--panel);stroke:var(--accent);stroke-width:2}
+.map-marker.selected circle,.map-marker:hover circle{fill:var(--accent)}
+.map-marker:focus-visible{outline:none}
+.map-marker:focus-visible circle{stroke:var(--text);stroke-width:4}
+.leaflet-container{background:var(--map);font-family:system-ui,sans-serif}
+.osm-pin{display:grid;place-items:center;border:2px solid #fff;border-radius:50%;background:#63380d;color:#fff;font:750 12px var(--mono);box-shadow:0 1px 5px #0007}
+.osm-pin.selected{background:#ffc367;color:#271e11}
+.map-message{padding:6px 12px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}
+.slider-box{padding:13px 16px 15px;border-top:1px solid var(--line)}
+.readout{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.readout output{font:750 clamp(17px,3.2vw,24px) var(--mono);letter-spacing:-.035em}
+.readout output+output{color:var(--accent)}
+#walk-time{width:100%;margin:10px 0 2px;accent-color:var(--accent);cursor:pointer;min-height:24px}
+.range-labels{display:flex;justify-content:space-between;gap:6px;color:var(--muted)}
+.slider-note{font-size:12px;color:var(--muted);margin-top:7px}
+.points-card{padding:14px}
+.points-card h3{margin:1px 3px 10px}
+.points-list{display:grid;gap:4px}
+.point-button{width:100%;text-align:left;display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:8px;padding:9px 7px;background:transparent;color:var(--text);border:1px solid transparent;border-radius:8px}
+.point-button:hover,.point-button[aria-pressed="true"]{background:var(--panel2);border-color:var(--line)}
+.point-number{color:var(--accent)}
+.point-button strong{font-size:14px}
+.point-distance{font:12px var(--mono);color:var(--muted)}
+.point-detail{padding:13px 7px 2px;border-top:1px solid var(--line);margin-top:10px;min-height:100px}
+.point-detail strong{display:block}
+.point-detail p{font-size:14px;color:var(--muted);margin-top:5px}
+.callout{margin-top:12px;padding:13px 16px;border-radius:8px;border:1px solid var(--line);border-left:3px solid var(--accent);background:var(--note);font-size:14px}
+.return,.registration{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:center}
+.return p,.registration p{color:var(--muted)}
+.registration .button{justify-self:start}
+footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:40px;padding:16px 0 24px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+@media(max-width:760px){.map-layout{grid-template-columns:1fr}.stops{grid-template-columns:repeat(2,minmax(0,1fr))}.topbar nav{display:none}.section-head{align-items:start}.section-head p{font-size:13px}.hero-tag{display:none}}
+@media(max-width:540px){.wrap{width:calc(100% - 28px)}.hero{min-height:0;padding:26px 16px}.hero::after{background:linear-gradient(90deg,var(--panel) 0%,var(--panel) 37%,transparent 125%)}.train-grid,.return,.registration,.stops{grid-template-columns:1fr}.section-head{flex-wrap:wrap;gap:9px}.map-tools{padding:8px}.map-caption{font-size:9px}.stat-label{font-size:9px}.theme{padding:8px 10px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body id="top">
+<div class="wrap">
+<header class="topbar">
+  <a class="brand" href="#top">
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="16" cy="16" r="13"/><path d="M20.6 11.4 18 18l-6.6 2.6L14 14zM16 1v4m0 22v4M1 16h4m22 0h4"/></svg>
+    Горняк / Ноябрьский выезд
+  </a>
+  <nav aria-label="Разделы"><a href="#trains">Электрички</a><a href="#track">Карта</a><a href="#return">Обратно</a></nav>
+  <button type="button" class="theme" id="theme" aria-label="Включить светлую тему"><span aria-hidden="true" id="theme-icon">☼</span><span id="theme-label">Светлая</span></button>
+</header>
+
+<main>
+  <div class="hero">
+    <svg id="contours" viewBox="0 0 1080 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+    <div class="eyebrow">13–15 ноября 2026 / Дорога на выезд</div>
+    <h1>Ястребиное</h1>
+    <p>В пятницу вечером едем до Кузнечного и идём по Хошиминке к стоянке «Горняк». В воскресенье возвращаемся вместе.</p>
+    <div class="hero-actions">
+      <a class="button primary" href="#track">Карта маршрута <span aria-hidden="true">↓</span></a>
+      <button class="button gpx" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v4h14v-4"/></svg>Скачать GPX</button>
+    </div>
+    <div class="hero-tag">61°09′49.6″ N · 29°43′12.2″ E</div>
+  </div>
+  <div class="stats" aria-label="Маршрут в цифрах">
+    <div class="stat"><strong>12,01 км</strong><span class="stat-label">Пешком до стоянки</span></div>
+    <div class="stat"><strong>5–6 ч</strong><span class="stat-label">Ориентир в пути</span></div>
+    <div class="stat"><strong>1 126 ₽</strong><span class="stat-label">Электрички туда и обратно</span></div>
+  </div>
+
+  <section id="trains">
+    <div class="section-head">
+      <div><span class="index">01 / Электрички</span><h2>Туда и обратно</h2></div>
+      <p>Время московское</p>
+    </div>
+    <div class="train-grid">
+      <article class="card">
+        <header><h3>Туда</h3><span class="date">Пт · 13 ноября</span></header>
+        <div class="train-leg">
+          <div><time datetime="2026-11-13T20:35:00+03:00">20:35</time><span class="station">Финляндский вокзал</span></div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div><time datetime="2026-11-13T23:40:00+03:00">23:40</time><span class="station">Кузнечное</span></div>
+        </div>
+        <div class="train-foot"><span class="train-number">№ 6567 · 563 ₽</span><a href="https://rasp.yandex.ru/thread/R_6567_9602497_g25_4?departure_from=2026-11-13+20%3A35%3A00&amp;station_from=9602497&amp;station_to=9602748">Расписание ↗</a></div>
+      </article>
+      <article class="card">
+        <header><h3>Обратно</h3><span class="date">Вс · 15 ноября</span></header>
+        <div class="train-leg">
+          <div><time datetime="2026-11-15T18:10:00+03:00">18:10</time><span class="station">Кузнечное</span></div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div><time id="return-arrival" datetime="2026-11-15T21:50:00+03:00">21:50</time><span class="station">Финляндский вокзал</span></div>
+        </div>
+        <div class="train-foot"><span class="train-number">№ 6568 · 563 ₽</span><a href="https://rasp.yandex.ru/thread/R_6568_9602748_g25_4?departure_from=2026-11-15+18%3A10%3A00&amp;station_from=9602748&amp;station_to=9602497">Расписание ↗</a></div>
+      </article>
+    </div>
+    <p class="after-train">Студентам действует скидка. Если садитесь по пути, согласуйте станцию с организатором.</p>
+    <details><summary>Остановки электрички туда</summary><ul class="stops" id="train-stops"></ul></details>
+  </section>
+
+  <section id="track">
+    <div class="section-head">
+      <div><span class="index">02 / Ночной переход</span><h2>От станции до «Горняка»</h2></div>
+      <button class="button gpx" type="button">Скачать GPX <span aria-hidden="true">↓</span></button>
+    </div>
+    <div class="map-layout">
+      <div class="map-card">
+        <div class="map-tools">
+          <span class="map-caption"><span id="map-mode">Схема трека</span> · <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a></span>
+          <button class="map-toggle" id="map-toggle" type="button" aria-pressed="false">Открыть карту OSM</button>
+        </div>
+        <div class="map-stage">
+          <svg id="schematic" viewBox="0 0 560 385" role="group" aria-label="Схема маршрута от Кузнечного до Горняка">
+            <defs><pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse"><path d="M25 0H0V25" fill="none" stroke="var(--grid)" stroke-width="1"/></pattern></defs>
+            <rect width="560" height="385" fill="url(#grid)"/>
+            <g transform="translate(520 30)" fill="var(--muted)" text-anchor="middle" aria-hidden="true"><text y="0" font-size="12">С</text><path d="M0 7l-6 16 6-4 6 4z"/></g>
+            <polyline id="route-shadow" fill="none" stroke="var(--bg)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline id="route-line" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <g id="scheme-points"></g>
+            <circle id="scheme-position" r="7" fill="var(--accent)" stroke="var(--text)" stroke-width="2" pointer-events="none"/>
+          </svg>
+          <div id="map" hidden aria-label="Интерактивная карта OpenStreetMap"></div>
+        </div>
+        <p class="map-message" id="map-message" role="status" hidden></p>
+        <div class="slider-box">
+          <div class="readout"><output id="walk-distance" for="walk-time">0,00 км</output><output id="walk-clock" for="walk-time">≈ 23:50 МСК</output></div>
+          <input id="walk-time" type="range" min="0" max="330" value="0" step="1" aria-label="Ориентировочное положение группы по времени">
+          <div class="range-labels"><span>23:50 · 13 ноя</span><span>05:20 · 14 ноя</span></div>
+          <p class="slider-note">Бегунок показывает примерный график на 5,5 часа. Для расчёта взят старт в 23:50 и два плановых привала. Это оценка, фактическое время зависит от темпа группы.</p>
+        </div>
+      </div>
+      <aside class="points-card" aria-label="Точки на маршруте">
+        <h3>Точки по пути</h3>
+        <div class="points-list" id="points"></div>
+        <div class="point-detail" id="point-detail" aria-live="polite"><strong>Кузнечное</strong><p>Собираемся после выхода из электрички и идём всей группой.</p></div>
+      </aside>
+    </div>
+    <p class="callout"><strong>У карьера.</strong> Ночной проход пока не подтверждён. Если он закрыт, этот GPX не даёт обхода. У стоянки линия заканчивается примерно в 25 м от цели, подход определим на месте.</p>
+  </section>
+
+  <section id="return">
+    <div class="section-head"><div><span class="index">03 / Воскресенье</span><h2>Возвращаемся вместе</h2></div></div>
+    <div class="card return">
+      <div><span class="date">15 ноября</span><h3>Стоянка «Горняк» → Кузнечное</h3></div>
+      <p>Утром тренировка, после неё всей группой идём на станцию к электричке <strong>18:10</strong>. Время выхода и обратный GPX уточняются.</p>
+    </div>
+  </section>
+
+  <section id="registration">
+    <div class="card registration">
+      <div><span class="index">04 / Анкета участников</span><h3>Заполнить до 11 ноября, 20:00 МСК</h3></div>
+      <div><p id="registration-pending">Ссылка появится, когда анкета будет готова.</p><a class="button primary" id="registration-link" hidden>Заполнить анкету ↗</a></div>
+    </div>
+  </section>
+</main>
+
+<footer><span>Ястребиное · Ноябрь 2026</span><a href="https://www.openstreetmap.org/copyright">Данные маршрута © OpenStreetMap contributors, ODbL</a></footer>
+</div>
+
+<noscript><p class="wrap">Для карты, бегунка и скачивания трека включите JavaScript.</p></noscript>
+<script type="application/xml" id="gpx-data">
+<?xml version='1.0' encoding='utf-8'?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Codex / OpenStreetMap graph shortest-path calculation">
+  <metadata>
+    <name>Кузнечное → Горняк | без отмеченного брода | 12,01 км</name>
+    <desc>Расчёт по сети дорог и троп OSM, 08.11.2026. Длина линии 12.012 км. Карьерный проход не подтверждён. Конец линии на нанесённой тропе в 24.7 м от точной стоянки; последние метры не прорисованы. Физическая маркировка и текущее состояние троп не проверены.</desc>
+    <copyright author="OpenStreetMap contributors">
+      <license>https://opendatacommons.org/licenses/odbl/1-0/</license>
+    </copyright>
+    <link href="https://www.openstreetmap.org/copyright">
+      <text>© OpenStreetMap contributors, ODbL</text>
+    </link>
+  </metadata>
+  <wpt lat="61.1133100" lon="29.8745948">
+    <name>01 Старт — выход у станции Кузнечное</name>
+    <desc>Точка на нанесённой пешеходной дорожке у станции.</desc>
+    <sym>Flag, Green</sym>
+  </wpt>
+  <wpt lat="61.1256763" lon="29.8310931">
+    <name>02 Карьер — проверить проход</name>
+    <desc>Далее около 1,27 км линии находятся внутри картографического контура карьера. Разрешённый проход на дату похода не подтверждён. При закрытии этот трек здесь не применим.</desc>
+    <sym>Danger Area</sym>
+  </wpt>
+  <wpt lat="61.1303784" lon="29.8109914">
+    <name>03 Начало лесной Хошиминки</name>
+    <desc>Начало именованной тропы в OSM.</desc>
+    <sym>Flag, Blue</sym>
+  </wpt>
+  <wpt lat="61.1520166" lon="29.7387683">
+    <name>04 Развилка перед Пестово</name>
+    <desc>Здесь расходятся кратчайший вариант с бродом и вариант без отмеченного брода.</desc>
+    <sym>Flag, Blue</sym>
+  </wpt>
+  <wpt lat="61.1639919" lon="29.7198802">
+    <name>06 Конец нанесённой линии — до цели 25 м</name>
+    <desc>Здесь заканчивается линия GPX. Точная стоянка расположена отдельно; соединяющей тропы в OSM нет.</desc>
+    <sym>Flag, Blue</sym>
+  </wpt>
+  <wpt lat="61.1637860" lon="29.7200530">
+    <name>07 Финиш — Горняк, точка пользователя</name>
+    <desc>61.163786,29.720053. Совпадает с меткой Горняк OSM с расхождением менее 0,2 м. Последние 24,7 м по прямой не являются подтверждённой тропой.</desc>
+    <sym>Campground</sym>
+  </wpt>
+  <wpt lat="61.1304708" lon="29.8096088">
+    <name>Привал 1 — после карьера | 4,39 км | 5 мин</name>
+    <desc>Согласованный короткий технический привал. Ориентир на тропе рядом с информационным стендом, за картографическим контуром карьера и примерно за 50 м пути до первого отмеченного мостика. Это не подтверждённая площадка: подходящее сухое место для всей группы выбрать рядом на месте, вне проезда и переправы. Попить, поправить одежду и рюкзаки, проверить фонари перед лесной частью.</desc>
+    <sym>Flag, Yellow</sym>
+    <type>Привал — площадку выбрать на месте</type>
+  </wpt>
+  <wpt lat="61.1359675" lon="29.7727005">
+    <name>Привал 2 — место отдыха | 6,84 км | 7–10 мин</name>
+    <desc>Согласованный основной привал у нанесённого в OSM места отдыха с костровищем, около 2 м по прямой от линии трека. После примерно 2,5 км лесной части. Чай из термоса, быстрый перекус, оценка состояния группы. Костёр не планируется. Сухость и вместимость площадки на дату похода не проверены.</desc>
+    <link href="https://www.openstreetmap.org/node/7037306986">
+      <text>Место отдыха в OpenStreetMap</text>
+    </link>
+    <sym>Picnic Area</sym>
+    <type>Основной привал</type>
+  </wpt>
+  <wpt lat="61.1511975" lon="29.7404620">
+    <name>Привал 3 — у Двинского | 9,40 км | резерв 5 мин</name>
+    <desc>Согласованный резервный привал по состоянию группы перед заключительным подходом к Пестово. Стоянка нанесена в OSM, около 13 м по прямой от линии трека; заход выбрать на месте. Если все идут уверенно и не нуждаются в отдыхе, пропустить. Состояние площадки не проверено.</desc>
+    <link href="https://www.openstreetmap.org/node/5186029552">
+      <text>Стоянка в OpenStreetMap</text>
+    </link>
+    <sym>Picnic Area</sym>
+    <type>Резервный привал</type>
+  </wpt>
+  <trk>
+    <name>Кузнечное → Горняк | без отмеченного брода | 12,01 км</name>
+    <desc>Линия только по нанесённым дорогам и тропам. Точная стоянка — отдельная точка.</desc>
+    <type>hiking</type>
+    <trkseg>
+      <trkpt lat="61.1133100" lon="29.8745948" />
+      <trkpt lat="61.1133629" lon="29.8747597" />
+      <trkpt lat="61.1134111" lon="29.8746960" />
+      <trkpt lat="61.1135989" lon="29.8752181" />
+      <trkpt lat="61.1136826" lon="29.8754511" />
+      <trkpt lat="61.1138552" lon="29.8751961" />
+      <trkpt lat="61.1140774" lon="29.8748680" />
+      <trkpt lat="61.1142833" lon="29.8745639" />
+      <trkpt lat="61.1147933" lon="29.8738302" />
+      <trkpt lat="61.1153590" lon="29.8730275" />
+      <trkpt lat="61.1156651" lon="29.8725799" />
+      <trkpt lat="61.1158752" lon="29.8722727" />
+      <trkpt lat="61.1159157" lon="29.8722134" />
+      <trkpt lat="61.1157380" lon="29.8715172" />
+      <trkpt lat="61.1156451" lon="29.8711536" />
+      <trkpt lat="61.1156214" lon="29.8710644" />
+      <trkpt lat="61.1156021" lon="29.8709885" />
+      <trkpt lat="61.1155789" lon="29.8709008" />
+      <trkpt lat="61.1155299" lon="29.8707076" />
+      <trkpt lat="61.1155889" lon="29.8706249" />
+      <trkpt lat="61.1156326" lon="29.8705391" />
+      <trkpt lat="61.1158118" lon="29.8701646" />
+      <trkpt lat="61.1161378" lon="29.8694483" />
+      <trkpt lat="61.1165005" lon="29.8685000" />
+      <trkpt lat="61.1168090" lon="29.8676798" />
+      <trkpt lat="61.1170569" lon="29.8670863" />
+      <trkpt lat="61.1174118" lon="29.8663047" />
+      <trkpt lat="61.1175512" lon="29.8660271" />
+      <trkpt lat="61.1176965" lon="29.8657378" />
+      <trkpt lat="61.1180507" lon="29.8650096" />
+      <trkpt lat="61.1181583" lon="29.8648300" />
+      <trkpt lat="61.1182509" lon="29.8646543" />
+      <trkpt lat="61.1183157" lon="29.8645538" />
+      <trkpt lat="61.1184237" lon="29.8643556" />
+      <trkpt lat="61.1184828" lon="29.8640445" />
+      <trkpt lat="61.1185883" lon="29.8635723" />
+      <trkpt lat="61.1187439" lon="29.8631503" />
+      <trkpt lat="61.1187866" lon="29.8630173" />
+      <trkpt lat="61.1188068" lon="29.8627350" />
+      <trkpt lat="61.1187376" lon="29.8624102" />
+      <trkpt lat="61.1186974" lon="29.8622919" />
+      <trkpt lat="61.1189100" lon="29.8619900" />
+      <trkpt lat="61.1190686" lon="29.8617207" />
+      <trkpt lat="61.1192276" lon="29.8613588" />
+      <trkpt lat="61.1194220" lon="29.8608536" />
+      <trkpt lat="61.1195123" lon="29.8605844" />
+      <trkpt lat="61.1196582" lon="29.8601204" />
+      <trkpt lat="61.1197431" lon="29.8597275" />
+      <trkpt lat="61.1198208" lon="29.8592259" />
+      <trkpt lat="61.1201609" lon="29.8561793" />
+      <trkpt lat="61.1203360" lon="29.8544394" />
+      <trkpt lat="61.1204477" lon="29.8533296" />
+      <trkpt lat="61.1205354" lon="29.8528190" />
+      <trkpt lat="61.1205289" lon="29.8527152" />
+      <trkpt lat="61.1205304" lon="29.8525052" />
+      <trkpt lat="61.1206276" lon="29.8518078" />
+      <trkpt lat="61.1205499" lon="29.8515825" />
+      <trkpt lat="61.1206150" lon="29.8513019" />
+      <trkpt lat="61.1207603" lon="29.8505577" />
+      <trkpt lat="61.1208708" lon="29.8498162" />
+      <trkpt lat="61.1217142" lon="29.8450882" />
+      <trkpt lat="61.1220028" lon="29.8432257" />
+      <trkpt lat="61.1220801" lon="29.8424372" />
+      <trkpt lat="61.1221217" lon="29.8422001" />
+      <trkpt lat="61.1221735" lon="29.8418449" />
+      <trkpt lat="61.1222647" lon="29.8414603" />
+      <trkpt lat="61.1223141" lon="29.8412108" />
+      <trkpt lat="61.1223676" lon="29.8408020" />
+      <trkpt lat="61.1223936" lon="29.8405715" />
+      <trkpt lat="61.1224619" lon="29.8403134" />
+      <trkpt lat="61.1223411" lon="29.8396993" />
+      <trkpt lat="61.1221969" lon="29.8392734" />
+      <trkpt lat="61.1221525" lon="29.8390401" />
+      <trkpt lat="61.1221398" lon="29.8387285" />
+      <trkpt lat="61.1221885" lon="29.8383686" />
+      <trkpt lat="61.1224197" lon="29.8374411" />
+      <trkpt lat="61.1225317" lon="29.8369254" />
+      <trkpt lat="61.1225538" lon="29.8363340" />
+      <trkpt lat="61.1231787" lon="29.8365838" />
+      <trkpt lat="61.1236996" lon="29.8368634" />
+      <trkpt lat="61.1238405" lon="29.8361169" />
+      <trkpt lat="61.1240395" lon="29.8353535" />
+      <trkpt lat="61.1242674" lon="29.8345429" />
+      <trkpt lat="61.1245019" lon="29.8338620" />
+      <trkpt lat="61.1246707" lon="29.8333580" />
+      <trkpt lat="61.1248355" lon="29.8329730" />
+      <trkpt lat="61.1250850" lon="29.8325143" />
+      <trkpt lat="61.1253639" lon="29.8319538" />
+      <trkpt lat="61.1255587" lon="29.8314187" />
+      <trkpt lat="61.1256763" lon="29.8310931" />
+      <trkpt lat="61.1258355" lon="29.8309231" />
+      <trkpt lat="61.1265146" lon="29.8282508" />
+      <trkpt lat="61.1270820" lon="29.8249749" />
+      <trkpt lat="61.1271124" lon="29.8242901" />
+      <trkpt lat="61.1281810" lon="29.8197680" />
+      <trkpt lat="61.1284997" lon="29.8188963" />
+      <trkpt lat="61.1291453" lon="29.8181303" />
+      <trkpt lat="61.1297151" lon="29.8156412" />
+      <trkpt lat="61.1297702" lon="29.8151950" />
+      <trkpt lat="61.1298607" lon="29.8144614" />
+      <trkpt lat="61.1299261" lon="29.8135559" />
+      <trkpt lat="61.1300412" lon="29.8126357" />
+      <trkpt lat="61.1301247" lon="29.8119633" />
+      <trkpt lat="61.1303784" lon="29.8109914" />
+      <trkpt lat="61.1303535" lon="29.8109041" />
+      <trkpt lat="61.1303393" lon="29.8107930" />
+      <trkpt lat="61.1303314" lon="29.8106296" />
+      <trkpt lat="61.1303444" lon="29.8104781" />
+      <trkpt lat="61.1304108" lon="29.8101797" />
+      <trkpt lat="61.1304434" lon="29.8100332" />
+      <trkpt lat="61.1304708" lon="29.8096088" />
+      <trkpt lat="61.1304640" lon="29.8095141" />
+      <trkpt lat="61.1304419" lon="29.8093352" />
+      <trkpt lat="61.1304014" lon="29.8091058" />
+      <trkpt lat="61.1304165" lon="29.8088809" />
+      <trkpt lat="61.1304165" lon="29.8087594" />
+      <trkpt lat="61.1304381" lon="29.8085580" />
+      <trkpt lat="61.1304480" lon="29.8083403" />
+      <trkpt lat="61.1304302" lon="29.8081479" />
+      <trkpt lat="61.1305117" lon="29.8077618" />
+      <trkpt lat="61.1306549" lon="29.8074732" />
+      <trkpt lat="61.1306667" lon="29.8070137" />
+      <trkpt lat="61.1307399" lon="29.8065872" />
+      <trkpt lat="61.1307950" lon="29.8063824" />
+      <trkpt lat="61.1308616" lon="29.8061844" />
+      <trkpt lat="61.1309202" lon="29.8059536" />
+      <trkpt lat="61.1309571" lon="29.8056468" />
+      <trkpt lat="61.1310727" lon="29.8053380" />
+      <trkpt lat="61.1312368" lon="29.8051630" />
+      <trkpt lat="61.1313328" lon="29.8049161" />
+      <trkpt lat="61.1314491" lon="29.8044477" />
+      <trkpt lat="61.1316107" lon="29.8042295" />
+      <trkpt lat="61.1316627" lon="29.8040225" />
+      <trkpt lat="61.1316669" lon="29.8036125" />
+      <trkpt lat="61.1316609" lon="29.8033391" />
+      <trkpt lat="61.1316790" lon="29.8029999" />
+      <trkpt lat="61.1317028" lon="29.8025845" />
+      <trkpt lat="61.1317280" lon="29.8021410" />
+      <trkpt lat="61.1318311" lon="29.8018179" />
+      <trkpt lat="61.1318214" lon="29.8015960" />
+      <trkpt lat="61.1317601" lon="29.8015024" />
+      <trkpt lat="61.1316279" lon="29.8010605" />
+      <trkpt lat="61.1315694" lon="29.8008997" />
+      <trkpt lat="61.1315199" lon="29.8007641" />
+      <trkpt lat="61.1314976" lon="29.8007027" />
+      <trkpt lat="61.1314169" lon="29.8004192" />
+      <trkpt lat="61.1312583" lon="29.8000867" />
+      <trkpt lat="61.1311241" lon="29.7986642" />
+      <trkpt lat="61.1311804" lon="29.7976809" />
+      <trkpt lat="61.1311088" lon="29.7968499" />
+      <trkpt lat="61.1310800" lon="29.7964851" />
+      <trkpt lat="61.1311169" lon="29.7961067" />
+      <trkpt lat="61.1310383" lon="29.7954783" />
+      <trkpt lat="61.1310508" lon="29.7949691" />
+      <trkpt lat="61.1310437" lon="29.7943158" />
+      <trkpt lat="61.1310832" lon="29.7940251" />
+      <trkpt lat="61.1311268" lon="29.7936865" />
+      <trkpt lat="61.1311295" lon="29.7932957" />
+      <trkpt lat="61.1312108" lon="29.7929540" />
+      <trkpt lat="61.1312362" lon="29.7924897" />
+      <trkpt lat="61.1312700" lon="29.7920249" />
+      <trkpt lat="61.1314293" lon="29.7915499" />
+      <trkpt lat="61.1314757" lon="29.7910490" />
+      <trkpt lat="61.1315868" lon="29.7906365" />
+      <trkpt lat="61.1316482" lon="29.7899658" />
+      <trkpt lat="61.1317697" lon="29.7895764" />
+      <trkpt lat="61.1317961" lon="29.7894933" />
+      <trkpt lat="61.1318544" lon="29.7893097" />
+      <trkpt lat="61.1318156" lon="29.7890179" />
+      <trkpt lat="61.1317873" lon="29.7886857" />
+      <trkpt lat="61.1315483" lon="29.7882638" />
+      <trkpt lat="61.1312361" lon="29.7877606" />
+      <trkpt lat="61.1311019" lon="29.7875415" />
+      <trkpt lat="61.1310215" lon="29.7871376" />
+      <trkpt lat="61.1309520" lon="29.7866690" />
+      <trkpt lat="61.1308139" lon="29.7861974" />
+      <trkpt lat="61.1307436" lon="29.7859557" />
+      <trkpt lat="61.1306613" lon="29.7858076" />
+      <trkpt lat="61.1306029" lon="29.7856180" />
+      <trkpt lat="61.1306969" lon="29.7848631" />
+      <trkpt lat="61.1307426" lon="29.7843669" />
+      <trkpt lat="61.1308222" lon="29.7838370" />
+      <trkpt lat="61.1308328" lon="29.7834079" />
+      <trkpt lat="61.1308382" lon="29.7827559" />
+      <trkpt lat="61.1308660" lon="29.7825821" />
+      <trkpt lat="61.1308932" lon="29.7824119" />
+      <trkpt lat="61.1309714" lon="29.7819230" />
+      <trkpt lat="61.1310122" lon="29.7814798" />
+      <trkpt lat="61.1310852" lon="29.7812068" />
+      <trkpt lat="61.1311835" lon="29.7811538" />
+      <trkpt lat="61.1312978" lon="29.7811184" />
+      <trkpt lat="61.1313786" lon="29.7810963" />
+      <trkpt lat="61.1315477" lon="29.7810698" />
+      <trkpt lat="61.1317086" lon="29.7807378" />
+      <trkpt lat="61.1317551" lon="29.7803541" />
+      <trkpt lat="61.1319054" lon="29.7799117" />
+      <trkpt lat="61.1320449" lon="29.7797289" />
+      <trkpt lat="61.1321962" lon="29.7795937" />
+      <trkpt lat="61.1325563" lon="29.7790080" />
+      <trkpt lat="61.1327598" lon="29.7786032" />
+      <trkpt lat="61.1329764" lon="29.7783901" />
+      <trkpt lat="61.1331375" lon="29.7779765" />
+      <trkpt lat="61.1330750" lon="29.7775748" />
+      <trkpt lat="61.1330856" lon="29.7773525" />
+      <trkpt lat="61.1330942" lon="29.7772563" />
+      <trkpt lat="61.1332176" lon="29.7768503" />
+      <trkpt lat="61.1334284" lon="29.7766910" />
+      <trkpt lat="61.1335113" lon="29.7764235" />
+      <trkpt lat="61.1336930" lon="29.7760121" />
+      <trkpt lat="61.1338693" lon="29.7757543" />
+      <trkpt lat="61.1342179" lon="29.7756309" />
+      <trkpt lat="61.1343993" lon="29.7750136" />
+      <trkpt lat="61.1345521" lon="29.7748721" />
+      <trkpt lat="61.1346966" lon="29.7748625" />
+      <trkpt lat="61.1349594" lon="29.7746087" />
+      <trkpt lat="61.1351266" lon="29.7740809" />
+      <trkpt lat="61.1352477" lon="29.7738549" />
+      <trkpt lat="61.1353541" lon="29.7737040" />
+      <trkpt lat="61.1355501" lon="29.7734258" />
+      <trkpt lat="61.1357784" lon="29.7728817" />
+      <trkpt lat="61.1359935" lon="29.7726361" />
+      <trkpt lat="61.1362102" lon="29.7725085" />
+      <trkpt lat="61.1365191" lon="29.7722868" />
+      <trkpt lat="61.1366667" lon="29.7721516" />
+      <trkpt lat="61.1369115" lon="29.7717622" />
+      <trkpt lat="61.1372377" lon="29.7712569" />
+      <trkpt lat="61.1373137" lon="29.7710825" />
+      <trkpt lat="61.1374146" lon="29.7708508" />
+      <trkpt lat="61.1375369" lon="29.7706334" />
+      <trkpt lat="61.1376970" lon="29.7704501" />
+      <trkpt lat="61.1380112" lon="29.7702328" />
+      <trkpt lat="61.1381732" lon="29.7699444" />
+      <trkpt lat="61.1386438" lon="29.7692097" />
+      <trkpt lat="61.1390128" lon="29.7691596" />
+      <trkpt lat="61.1390848" lon="29.7691262" />
+      <trkpt lat="61.1391721" lon="29.7691125" />
+      <trkpt lat="61.1392541" lon="29.7690545" />
+      <trkpt lat="61.1393189" lon="29.7689509" />
+      <trkpt lat="61.1393840" lon="29.7687317" />
+      <trkpt lat="61.1394033" lon="29.7686560" />
+      <trkpt lat="61.1394367" lon="29.7681538" />
+      <trkpt lat="61.1394337" lon="29.7675857" />
+      <trkpt lat="61.1394381" lon="29.7671294" />
+      <trkpt lat="61.1396669" lon="29.7663422" />
+      <trkpt lat="61.1398858" lon="29.7658326" />
+      <trkpt lat="61.1402260" lon="29.7653423" />
+      <trkpt lat="61.1404196" lon="29.7650172" />
+      <trkpt lat="61.1406501" lon="29.7644051" />
+      <trkpt lat="61.1408104" lon="29.7642777" />
+      <trkpt lat="61.1410231" lon="29.7640591" />
+      <trkpt lat="61.1412295" lon="29.7637702" />
+      <trkpt lat="61.1414529" lon="29.7633822" />
+      <trkpt lat="61.1415243" lon="29.7632941" />
+      <trkpt lat="61.1416088" lon="29.7632266" />
+      <trkpt lat="61.1416826" lon="29.7632167" />
+      <trkpt lat="61.1419174" lon="29.7632028" />
+      <trkpt lat="61.1420487" lon="29.7632253" />
+      <trkpt lat="61.1421256" lon="29.7632331" />
+      <trkpt lat="61.1422316" lon="29.7631716" />
+      <trkpt lat="61.1422826" lon="29.7630676" />
+      <trkpt lat="61.1423129" lon="29.7629436" />
+      <trkpt lat="61.1424004" lon="29.7626939" />
+      <trkpt lat="61.1424676" lon="29.7625643" />
+      <trkpt lat="61.1426053" lon="29.7622770" />
+      <trkpt lat="61.1426369" lon="29.7622110" />
+      <trkpt lat="61.1427218" lon="29.7620746" />
+      <trkpt lat="61.1427680" lon="29.7620412" />
+      <trkpt lat="61.1428287" lon="29.7619791" />
+      <trkpt lat="61.1429245" lon="29.7618909" />
+      <trkpt lat="61.1430537" lon="29.7617954" />
+      <trkpt lat="61.1432779" lon="29.7617103" />
+      <trkpt lat="61.1433703" lon="29.7616584" />
+      <trkpt lat="61.1434525" lon="29.7615113" />
+      <trkpt lat="61.1435461" lon="29.7614224" />
+      <trkpt lat="61.1437765" lon="29.7611368" />
+      <trkpt lat="61.1439625" lon="29.7609006" />
+      <trkpt lat="61.1440460" lon="29.7607946" />
+      <trkpt lat="61.1443439" lon="29.7599787" />
+      <trkpt lat="61.1445696" lon="29.7594403" />
+      <trkpt lat="61.1447907" lon="29.7587524" />
+      <trkpt lat="61.1450113" lon="29.7580289" />
+      <trkpt lat="61.1451380" lon="29.7576676" />
+      <trkpt lat="61.1452362" lon="29.7571521" />
+      <trkpt lat="61.1453162" lon="29.7569087" />
+      <trkpt lat="61.1453893" lon="29.7566839" />
+      <trkpt lat="61.1454246" lon="29.7565123" />
+      <trkpt lat="61.1455024" lon="29.7562218" />
+      <trkpt lat="61.1456063" lon="29.7560149" />
+      <trkpt lat="61.1457413" lon="29.7554631" />
+      <trkpt lat="61.1460276" lon="29.7545592" />
+      <trkpt lat="61.1464655" lon="29.7533355" />
+      <trkpt lat="61.1466211" lon="29.7528314" />
+      <trkpt lat="61.1468822" lon="29.7520591" />
+      <trkpt lat="61.1469075" lon="29.7518299" />
+      <trkpt lat="61.1470857" lon="29.7514220" />
+      <trkpt lat="61.1473382" lon="29.7506727" />
+      <trkpt lat="61.1474003" lon="29.7505171" />
+      <trkpt lat="61.1474309" lon="29.7504269" />
+      <trkpt lat="61.1476742" lon="29.7494723" />
+      <trkpt lat="61.1478700" lon="29.7488816" />
+      <trkpt lat="61.1481911" lon="29.7481384" />
+      <trkpt lat="61.1483844" lon="29.7477058" />
+      <trkpt lat="61.1486167" lon="29.7471588" />
+      <trkpt lat="61.1487721" lon="29.7467237" />
+      <trkpt lat="61.1488911" lon="29.7465543" />
+      <trkpt lat="61.1489822" lon="29.7463594" />
+      <trkpt lat="61.1490030" lon="29.7463075" />
+      <trkpt lat="61.1490360" lon="29.7462359" />
+      <trkpt lat="61.1489784" lon="29.7461465" />
+      <trkpt lat="61.1489269" lon="29.7459337" />
+      <trkpt lat="61.1491231" lon="29.7449465" />
+      <trkpt lat="61.1493099" lon="29.7443658" />
+      <trkpt lat="61.1499823" lon="29.7430206" />
+      <trkpt lat="61.1509910" lon="29.7416172" />
+      <trkpt lat="61.1512432" lon="29.7407268" />
+      <trkpt lat="61.1514160" lon="29.7403300" />
+      <trkpt lat="61.1515841" lon="29.7403010" />
+      <trkpt lat="61.1517294" lon="29.7400834" />
+      <trkpt lat="61.1520166" lon="29.7387683" />
+      <trkpt lat="61.1520007" lon="29.7384564" />
+      <trkpt lat="61.1519941" lon="29.7381984" />
+      <trkpt lat="61.1518881" lon="29.7378483" />
+      <trkpt lat="61.1518954" lon="29.7375952" />
+      <trkpt lat="61.1519117" lon="29.7372572" />
+      <trkpt lat="61.1518637" lon="29.7369505" />
+      <trkpt lat="61.1519010" lon="29.7364457" />
+      <trkpt lat="61.1519648" lon="29.7359415" />
+      <trkpt lat="61.1520317" lon="29.7354903" />
+      <trkpt lat="61.1519976" lon="29.7350957" />
+      <trkpt lat="61.1519780" lon="29.7347499" />
+      <trkpt lat="61.1521087" lon="29.7340889" />
+      <trkpt lat="61.1522749" lon="29.7336209" />
+      <trkpt lat="61.1523098" lon="29.7331501" />
+      <trkpt lat="61.1523088" lon="29.7325119" />
+      <trkpt lat="61.1522480" lon="29.7319273" />
+      <trkpt lat="61.1522889" lon="29.7313813" />
+      <trkpt lat="61.1523017" lon="29.7309120" />
+      <trkpt lat="61.1522022" lon="29.7301612" />
+      <trkpt lat="61.1521955" lon="29.7298007" />
+      <trkpt lat="61.1521871" lon="29.7292665" />
+      <trkpt lat="61.1522020" lon="29.7288129" />
+      <trkpt lat="61.1521889" lon="29.7283524" />
+      <trkpt lat="61.1522330" lon="29.7278105" />
+      <trkpt lat="61.1523033" lon="29.7273804" />
+      <trkpt lat="61.1523915" lon="29.7270045" />
+      <trkpt lat="61.1526235" lon="29.7264898" />
+      <trkpt lat="61.1528180" lon="29.7261579" />
+      <trkpt lat="61.1528572" lon="29.7258531" />
+      <trkpt lat="61.1529438" lon="29.7255551" />
+      <trkpt lat="61.1531293" lon="29.7253066" />
+      <trkpt lat="61.1533804" lon="29.7248581" />
+      <trkpt lat="61.1535479" lon="29.7245262" />
+      <trkpt lat="61.1537299" lon="29.7238620" />
+      <trkpt lat="61.1538588" lon="29.7237138" />
+      <trkpt lat="61.1542673" lon="29.7235411" />
+      <trkpt lat="61.1544127" lon="29.7235445" />
+      <trkpt lat="61.1544878" lon="29.7236359" />
+      <trkpt lat="61.1545138" lon="29.7236458" />
+      <trkpt lat="61.1546064" lon="29.7234558" />
+      <trkpt lat="61.1546198" lon="29.7233264" />
+      <trkpt lat="61.1546926" lon="29.7231970" />
+      <trkpt lat="61.1549230" lon="29.7230368" />
+      <trkpt lat="61.1550940" lon="29.7228396" />
+      <trkpt lat="61.1551752" lon="29.7227245" />
+      <trkpt lat="61.1552008" lon="29.7224775" />
+      <trkpt lat="61.1551985" lon="29.7223764" />
+      <trkpt lat="61.1553635" lon="29.7219927" />
+      <trkpt lat="61.1554400" lon="29.7217406" />
+      <trkpt lat="61.1554537" lon="29.7216471" />
+      <trkpt lat="61.1554988" lon="29.7214683" />
+      <trkpt lat="61.1555459" lon="29.7212609" />
+      <trkpt lat="61.1556381" lon="29.7211186" />
+      <trkpt lat="61.1556557" lon="29.7210414" />
+      <trkpt lat="61.1556690" lon="29.7210935" />
+      <trkpt lat="61.1558192" lon="29.7209588" />
+      <trkpt lat="61.1558260" lon="29.7208903" />
+      <trkpt lat="61.1558977" lon="29.7207133" />
+      <trkpt lat="61.1560497" lon="29.7205576" />
+      <trkpt lat="61.1560787" lon="29.7204762" />
+      <trkpt lat="61.1560855" lon="29.7203205" />
+      <trkpt lat="61.1560941" lon="29.7201860" />
+      <trkpt lat="61.1561726" lon="29.7200586" />
+      <trkpt lat="61.1562528" lon="29.7199453" />
+      <trkpt lat="61.1563160" lon="29.7198674" />
+      <trkpt lat="61.1564065" lon="29.7196728" />
+      <trkpt lat="61.1564625" lon="29.7194728" />
+      <trkpt lat="61.1565348" lon="29.7193791" />
+      <trkpt lat="61.1565854" lon="29.7192526" />
+      <trkpt lat="61.1566618" lon="29.7190290" />
+      <trkpt lat="61.1567682" lon="29.7187890" />
+      <trkpt lat="61.1568207" lon="29.7187972" />
+      <trkpt lat="61.1569050" lon="29.7187078" />
+      <trkpt lat="61.1569953" lon="29.7186997" />
+      <trkpt lat="61.1570757" lon="29.7186265" />
+      <trkpt lat="61.1571561" lon="29.7185711" />
+      <trkpt lat="61.1572365" lon="29.7185113" />
+      <trkpt lat="61.1573251" lon="29.7183880" />
+      <trkpt lat="61.1573837" lon="29.7181960" />
+      <trkpt lat="61.1574173" lon="29.7181033" />
+      <trkpt lat="61.1574650" lon="29.7179365" />
+      <trkpt lat="61.1575047" lon="29.7177516" />
+      <trkpt lat="61.1575761" lon="29.7175380" />
+      <trkpt lat="61.1576613" lon="29.7173490" />
+      <trkpt lat="61.1577425" lon="29.7172463" />
+      <trkpt lat="61.1578563" lon="29.7171958" />
+      <trkpt lat="61.1579554" lon="29.7173231" />
+      <trkpt lat="61.1581166" lon="29.7178264" />
+      <trkpt lat="61.1583092" lon="29.7179650" />
+      <trkpt lat="61.1584401" lon="29.7180031" />
+      <trkpt lat="61.1585946" lon="29.7180139" />
+      <trkpt lat="61.1587667" lon="29.7179658" />
+      <trkpt lat="61.1588448" lon="29.7178523" />
+      <trkpt lat="61.1589479" lon="29.7176475" />
+      <trkpt lat="61.1590407" lon="29.7174360" />
+      <trkpt lat="61.1591507" lon="29.7172686" />
+      <trkpt lat="61.1592529" lon="29.7172761" />
+      <trkpt lat="61.1593144" lon="29.7174820" />
+      <trkpt lat="61.1594205" lon="29.7177206" />
+      <trkpt lat="61.1594935" lon="29.7177993" />
+      <trkpt lat="61.1595750" lon="29.7178461" />
+      <trkpt lat="61.1596856" lon="29.7180710" />
+      <trkpt lat="61.1597530" lon="29.7181778" />
+      <trkpt lat="61.1598306" lon="29.7182547" />
+      <trkpt lat="61.1599272" lon="29.7183048" />
+      <trkpt lat="61.1600221" lon="29.7183370" />
+      <trkpt lat="61.1600823" lon="29.7183224" />
+      <trkpt lat="61.1601361" lon="29.7183049" />
+      <trkpt lat="61.1600921" lon="29.7186493" />
+      <trkpt lat="61.1601401" lon="29.7187360" />
+      <trkpt lat="61.1601612" lon="29.7188134" />
+      <trkpt lat="61.1602943" lon="29.7188612" />
+      <trkpt lat="61.1605505" lon="29.7188934" />
+      <trkpt lat="61.1607109" lon="29.7188022" />
+      <trkpt lat="61.1607599" lon="29.7188480" />
+      <trkpt lat="61.1608415" lon="29.7188089" />
+      <trkpt lat="61.1611134" lon="29.7186064" />
+      <trkpt lat="61.1614673" lon="29.7181803" />
+      <trkpt lat="61.1614832" lon="29.7181074" />
+      <trkpt lat="61.1615037" lon="29.7179355" />
+      <trkpt lat="61.1615368" lon="29.7177995" />
+      <trkpt lat="61.1616848" lon="29.7175134" />
+      <trkpt lat="61.1617685" lon="29.7173960" />
+      <trkpt lat="61.1617386" lon="29.7172979" />
+      <trkpt lat="61.1617819" lon="29.7171743" />
+      <trkpt lat="61.1619399" lon="29.7166939" />
+      <trkpt lat="61.1620695" lon="29.7165414" />
+      <trkpt lat="61.1621604" lon="29.7164582" />
+      <trkpt lat="61.1622304" lon="29.7162683" />
+      <trkpt lat="61.1623519" lon="29.7161665" />
+      <trkpt lat="61.1625261" lon="29.7160786" />
+      <trkpt lat="61.1626704" lon="29.7161096" />
+      <trkpt lat="61.1628410" lon="29.7161573" />
+      <trkpt lat="61.1630336" lon="29.7162465" />
+      <trkpt lat="61.1630993" lon="29.7162967" />
+      <trkpt lat="61.1632209" lon="29.7164468" />
+      <trkpt lat="61.1633288" lon="29.7166324" />
+      <trkpt lat="61.1633688" lon="29.7167635" />
+      <trkpt lat="61.1633999" lon="29.7168305" />
+      <trkpt lat="61.1634680" lon="29.7169598" />
+      <trkpt lat="61.1635881" lon="29.7173222" />
+      <trkpt lat="61.1636760" lon="29.7175702" />
+      <trkpt lat="61.1637358" lon="29.7178432" />
+      <trkpt lat="61.1637782" lon="29.7181069" />
+      <trkpt lat="61.1638102" lon="29.7182915" />
+      <trkpt lat="61.1638277" lon="29.7185427" />
+      <trkpt lat="61.1638587" lon="29.7188174" />
+      <trkpt lat="61.1638586" lon="29.7190400" />
+      <trkpt lat="61.1638747" lon="29.7193057" />
+      <trkpt lat="61.1639066" lon="29.7195088" />
+      <trkpt lat="61.1639682" lon="29.7197588" />
+      <trkpt lat="61.1639919" lon="29.7198802" />
+    </trkseg>
+  </trk>
+</gpx>
+</script>
+<script>
+'use strict';
+
+// Сюда подставляется опубликованная ссылка для участников.
+const FORM_URL = '';
+if (FORM_URL) {
+  const link = document.querySelector('#registration-link');
+  link.href = FORM_URL;
+  link.hidden = false;
+  document.querySelector('#registration-pending').hidden = true;
+  const heroLink = link.cloneNode(true);
+  heroLink.removeAttribute('id');
+  document.querySelector('.hero-actions').prepend(heroLink);
+}
+
+const themeButton = document.querySelector('#theme');
+function setTheme(theme) {
+  const light = theme === 'light';
+  document.documentElement.dataset.theme = theme;
+  document.querySelector('#theme-color').content = light ? '#f1eee4' : '#171e19';
+  document.querySelector('#theme-label').textContent = light ? 'Тёмная' : 'Светлая';
+  document.querySelector('#theme-icon').textContent = light ? '☾' : '☼';
+  themeButton.setAttribute('aria-label', light ? 'Включить тёмную тему' : 'Включить светлую тему');
+}
+setTheme(document.documentElement.dataset.theme || 'dark');
+themeButton.addEventListener('click', () => {
+  const theme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+  setTheme(theme);
+  try { localStorage.setItem('yastrebinoe-theme', theme); } catch {}
+});
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+function svg(tag, attributes) {
+  const element = document.createElementNS(SVG_NS, tag);
+  for (const [key, value] of Object.entries(attributes)) element.setAttribute(key, value);
+  return element;
+}
+const contours = document.querySelector('#contours');
+for (const [cx, cy, scaleX, scaleY, phase] of [[785, 195, 1.1, .76, .9], [1080, 395, .68, .8, 2.8], [550, -100, 1.1, .65, .6]]) {
+  for (let ring = 0; ring < 24; ring++) {
+    const radius = 13 + ring * 10;
+    const points = [];
+    for (let step = 0; step < 120; step++) {
+      const a = step * Math.PI / 60;
+      const r = radius * (1 + .2 * Math.sin(3*a + phase) + .095 * Math.cos(5*a - phase) + .05 * Math.sin(7*a));
+      points.push([cx + r * Math.cos(a) * scaleX + ring * 1.5, cy + r * Math.sin(a) * scaleY - ring * .8].map(n => n.toFixed(1)).join(','));
+    }
+    contours.append(svg('polygon', {points:points.join(' '),fill:'none',stroke:'currentColor','stroke-width':ring%5===0 ? 1.4 : .7,opacity:ring%5===0 ? .64 : .43}));
+  }
+}
+
+const stations = [
+  ['Санкт-Петербург (Финляндский вокзал)','20:35'],['Кушелевка','20:43'],['Пискарёвка','20:48'],['Ручьи','20:52'],
+  ['пл. Новая Охта (Мурино)','20:58'],['Девяткино','21:02'],['пл. Лаврики','21:06'],['Капитолово','21:09'],
+  ['пл. Кузьмолово','21:12'],['Токсово','21:17'],['пл. Кавголово','21:21'],['пл. Осельки','21:26'],
+  ['Пери','21:31'],['пл. Лесколово (39 км)','21:35'],['Грузино','21:40'],['пл. Лаппелово (47 км)','21:43'],
+  ['Васкелово','21:48'],['пл. Лемболовское Озеро (54 км)','21:51'],['пл. Лемболово','21:55'],['Орехово','22:02'],
+  ['пл. 67 км','22:05'],['пл. Никитино (69 км)','22:09'],['Сосново','22:16'],['пл. Колосково (79 км)','22:22'],
+  ['пл. Петяярви','22:30'],['пл. Лосево','22:39'],['Громово','22:46'],['пл. Суходолье','22:51'],
+  ['Отрадное','22:57'],['Мюллюпельто','23:06'],['пл. Синёво','23:11'],['Приозерск','23:20'],
+  ['пл. Капеасалми (148 км)','23:27'],['пл. Боровое (152 км)','23:32'],['Кузнечное','23:40']
+];
+const trainStops = document.querySelector('#train-stops');
+for (const [name, clock] of stations) {
+  const row = document.createElement('li');
+  const label = document.createElement('span');
+  label.textContent = name;
+  const time = document.createElement('time');
+  time.dateTime = '2026-11-13T' + clock + ':00+03:00';
+  time.textContent = clock;
+  row.append(label, time);
+  trainStops.append(row);
+}
+
+const gpx = document.querySelector('#gpx-data').textContent.trim();
+const gpxDocument = new DOMParser().parseFromString(gpx, 'application/xml');
+const readPoints = name => [...gpxDocument.getElementsByTagName(name)].map(point =>
+  [Number(point.getAttribute('lat')), Number(point.getAttribute('lon'))]);
+const track = readPoints('trkpt');
+const waypoints = readPoints('wpt');
+const totalKm = 12.012;
+const points = [
+  {tag:'С',title:'Кузнечное',km:0,coordinates:waypoints[0],description:'Собираемся после выхода из электрички и идём всей группой.'},
+  {tag:'!',title:'Вход в район карьера',km:3.08,coordinates:waypoints[1],description:'На этом участке проверяем, открыт ли проход. Он пока не подтверждён для ночи 13/14 ноября.'},
+  {tag:'П1',title:'После карьера',km:4.39,rest:5,coordinates:waypoints[6],description:'Короткий привал на 5 минут. Подходящую площадку выбираем на месте.'},
+  {tag:'П2',title:'Место отдыха',km:6.84,rest:8,coordinates:waypoints[7],description:'Основной привал на 7–10 минут. Проверим, как чувствует себя группа.'},
+  {tag:'П3',title:'У Двинского',km:9.4,coordinates:waypoints[8],description:'Запасной привал на 5 минут по состоянию группы. Время этой остановки в бегунок не заложено.'},
+  {tag:'Ф',title:'Стоянка «Горняк»',km:totalKm,coordinates:waypoints[5],description:'Точка стоянки отмечена отдельно. До неё около 25 м от конца линии GPX.'}
+];
+const formatKm = km => new Intl.NumberFormat('ru-RU', {minimumFractionDigits:2,maximumFractionDigits:2}).format(km) + ' км';
+for (const button of document.querySelectorAll('.gpx')) {
+  button.addEventListener('click', () => {
+    const url = URL.createObjectURL(new Blob([gpx], {type:'application/gpx+xml'}));
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'Kuznechnoe-Gornyak-12km.gpx';
+    document.body.append(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+  });
+}
+
+function segmentKm(a, b) {
+  const rad = Math.PI / 180;
+  const h = Math.sin((b[0]-a[0])*rad/2)**2 + Math.cos(a[0]*rad)*Math.cos(b[0]*rad)*Math.sin((b[1]-a[1])*rad/2)**2;
+  return 12742 * Math.asin(Math.sqrt(h));
+}
+const distances = [0];
+for (let index = 1; index < track.length; index++) distances.push(distances[index-1] + segmentKm(track[index-1], track[index]));
+function coordinateAt(km) {
+  const distance = km / totalKm * distances.at(-1);
+  if (distance <= 0) return track[0];
+  const index = distances.findIndex(d => d >= distance);
+  if (index < 1) return track.at(-1);
+  const fraction = (distance - distances[index-1]) / (distances[index] - distances[index-1]);
+  return track[index-1].map((v, axis) => v + fraction * (track[index][axis] - v));
+}
+
+const latitudes = track.map(p => p[0]);
+const longitudes = track.map(p => p[1]);
+const latitudeMin = Math.min(...latitudes), latitudeMax = Math.max(...latitudes);
+const longitudeMin = Math.min(...longitudes), longitudeMax = Math.max(...longitudes);
+const longitudeScale = Math.cos((latitudeMin + latitudeMax) / 2 * Math.PI / 180);
+const xSpan = (longitudeMax - longitudeMin) * longitudeScale;
+const ySpan = latitudeMax - latitudeMin;
+const zoom = Math.min(448 / xSpan, 285 / ySpan);
+function project([lat, lon]) {
+  return [280 + (lon - (longitudeMax + longitudeMin)/2)*longitudeScale*zoom,
+          192.5 - (lat - (latitudeMax + latitudeMin)/2)*zoom];
+}
+const line = track.map(point => project(point).map(v => v.toFixed(2)).join(',')).join(' ');
+for (const id of ['route-shadow','route-line']) document.getElementById(id).setAttribute('points', line);
+
+const slider = document.querySelector('#walk-time');
+const duration = Number(slider.max);
+const restPoints = points.filter(point => point.rest);
+const movingMinutes = duration - restPoints.reduce((sum, point) => sum + point.rest, 0);
+function minuteAt(km) {
+  return km / totalKm * movingMinutes + restPoints.filter(point => point.km < km).reduce((sum, point) => sum + point.rest, 0);
+}
+function atMinute(minute) {
+  let rested = 0;
+  for (const point of restPoints) {
+    const arrival = minuteAt(point.km);
+    if (minute < arrival) break;
+    if (minute <= arrival + point.rest) return {km:point.km,rest:point};
+    rested += point.rest;
+  }
+  return {km:Math.min(totalKm,(minute - rested) / movingMinutes * totalKm)};
+}
+function displayClock(minute) {
+  const absolute = 23*60 + 50 + minute;
+  const hour = Math.floor(absolute/60) % 24;
+  return String(hour).padStart(2,'0') + ':' + String(absolute%60).padStart(2,'0');
+}
+let selected = points[0];
+let position = track[0];
+let osm;
+let currentMarker;
+let loading = false;
+function updatePosition() {
+  const minute = Number(slider.value);
+  const {km,rest} = atMinute(minute);
+  position = coordinateAt(km);
+  const [x,y] = project(position);
+  const marker = document.querySelector('#scheme-position');
+  marker.setAttribute('cx',x);
+  marker.setAttribute('cy',y);
+  if (currentMarker) currentMarker.setLatLng(position);
+  const distance = formatKm(km);
+  const clock = displayClock(minute);
+  document.querySelector('#walk-distance').textContent = rest ? distance + ' · ' + rest.tag : distance;
+  document.querySelector('#walk-clock').textContent = '≈ ' + clock + ' МСК';
+  slider.setAttribute('aria-valuetext', distance + ', около ' + clock + ' МСК, ' + (minute < 10 ? '13' : '14') + ' ноября' + (rest ? ', привал ' + rest.tag : ''));
+}
+slider.addEventListener('input', updatePosition);
+function selectPoint(point) {
+  selected = point;
+  slider.value = Math.round(minuteAt(point.km));
+  for (const item of points) {
+    const active = item === point;
+    item.button.setAttribute('aria-pressed', active);
+    item.schemeMarker.classList.toggle('selected', active);
+    item.osmMarker?.getElement()?.classList.toggle('selected', active);
+  }
+  const detail = document.querySelector('#point-detail');
+  detail.querySelector('strong').textContent = point.title;
+  detail.querySelector('p').textContent = point.description;
+  updatePosition();
+}
+for (const point of points) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'point-button';
+  const number = document.createElement('span');
+  number.className = 'point-number';
+  number.textContent = point.tag;
+  const title = document.createElement('strong');
+  title.textContent = point.title;
+  const distance = document.createElement('span');
+  distance.className = 'point-distance';
+  distance.textContent = formatKm(point.km);
+  button.append(number,title,distance);
+  button.addEventListener('click', () => selectPoint(point));
+  document.querySelector('#points').append(button);
+  point.button = button;
+
+  const [x,y] = project(point.coordinates);
+  const marker = svg('g', {class:'map-marker',transform:'translate('+x+' '+y+')',role:'button',tabindex:'0','aria-label':point.title});
+  marker.append(svg('circle',{r:11}));
+  const label = svg('text',{x:point.tag==='С' ? -16 : 16,y:4,'text-anchor':point.tag==='С' ? 'end' : 'start'});
+  label.textContent = point.tag;
+  marker.append(label);
+  marker.addEventListener('click', () => selectPoint(point));
+  marker.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      selectPoint(point);
+    }
+  });
+  document.querySelector('#scheme-points').append(marker);
+  point.schemeMarker = marker;
+}
+selectPoint(points[0]);
+
+const mapElement = document.querySelector('#map');
+const schematic = document.querySelector('#schematic');
+const mapMode = document.querySelector('#map-mode');
+const mapToggle = document.querySelector('#map-toggle');
+const mapMessage = document.querySelector('#map-message');
+function showMap(visible) {
+  mapElement.hidden = !visible;
+  schematic.toggleAttribute('hidden', visible);
+  mapMode.textContent = visible ? 'Карта маршрута' : 'Схема трека';
+  mapToggle.textContent = visible ? 'Показать схему' : 'Открыть карту OSM';
+  mapToggle.setAttribute('aria-pressed', visible);
+  mapMessage.hidden = true;
+  if (visible && osm) osm.invalidateSize();
+}
+function mapFailed() {
+  showMap(false);
+  mapMessage.textContent = 'Карта OSM сейчас не загрузилась. Схема и бегунок доступны.';
+  mapMessage.hidden = false;
+}
+function loadLeaflet() {
+  if (window.L) return Promise.resolve();
+  return new Promise((resolve,reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
+    script.crossOrigin = 'anonymous';
+    script.onload = resolve;
+    script.onerror = () => { script.remove(); reject(new Error('Leaflet')); };
+    document.head.append(script);
+  });
+}
+function startMap() {
+  const L = window.L;
+  osm = L.map(mapElement, {scrollWheelZoom:false});
+  const layer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom:19, attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(osm);
+  let tileLoaded = false;
+  layer.on('tileload', () => {
+    tileLoaded = true;
+    mapMessage.hidden = true;
+  });
+  layer.on('tileerror', () => {
+    if (!tileLoaded && !mapElement.hidden) {
+      mapMessage.textContent = 'Подложка OSM недоступна. Линия трека остаётся на карте.';
+      mapMessage.hidden = false;
+    }
+  });
+  const route = L.polyline(track,{color:'#a75313',weight:5,opacity:.95}).addTo(osm);
+  for (const point of points) {
+    const icon = L.divIcon({html:point.tag,className:'osm-pin',iconSize:[27,27],iconAnchor:[13,13]});
+    point.osmMarker = L.marker(point.coordinates,{icon,title:point.title,alt:point.title}).addTo(osm)
+      .bindTooltip(point.title).on('click', () => selectPoint(point));
+  }
+  currentMarker = L.circleMarker(position,{radius:7,color:'#fff',fillColor:'#e98222',fillOpacity:1,weight:2,interactive:false}).addTo(osm);
+  selected.osmMarker.getElement()?.classList.add('selected');
+  osm.fitBounds(route.getBounds(),{padding:[22,22]});
+}
+mapToggle.addEventListener('click', async () => {
+  if (loading) return;
+  if (!mapElement.hidden) { showMap(false); return; }
+  if (osm) { showMap(true); return; }
+  loading = true;
+  mapToggle.textContent = 'Загрузка…';
+  mapToggle.setAttribute('aria-busy','true');
+  try {
+    await loadLeaflet();
+    showMap(true);
+    startMap();
+  } catch {
+    osm?.remove();
+    osm = undefined;
+    currentMarker = undefined;
+    mapFailed();
+  } finally {
+    loading = false;
+    mapToggle.removeAttribute('aria-busy');
+  }
+});
+</script>
+</body>
+</html>

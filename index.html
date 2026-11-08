@@ -63,6 +63,9 @@ section{margin-top:clamp(34px,7vw,72px)}
 .train-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(16px,3vw,25px)}
 .card header{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:15px}
+.card details{margin-top:10px;border-radius:8px;background:var(--panel2)}
+.card details summary{padding:8px 10px;font-size:13px}
+.card .stops{grid-template-columns:repeat(2,minmax(0,1fr));padding:0 10px 9px;gap:0 10px}
 .date{color:var(--muted)}
 .train-number{color:var(--accent)}
 .train-leg{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:12px;align-items:start}
@@ -163,7 +166,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
     <h1>Ястребиное</h1>
     <p>В пятницу вечером едем до Кузнечного и идём по Хошиминке к стоянке «Горняк». В воскресенье возвращаемся вместе.</p>
     <div class="hero-registration">
-      <a class="button primary" href="https://docs.google.com/forms/d/e/1FAIpQLScF1kTkBOVCbH029de_U1eDoc0rSmfvN8daecf_QnBlP55_FQ/viewform">Заполнить анкету <span aria-hidden="true">↗</span></a>
+      <a class="button primary" href="https://docs.google.com/forms/d/e/1FAIpQLScF1kTkBOVCbH029de_U1eDoc0rSmfvN8daecf_QnBlP55_FQ/viewform" target="_blank" rel="noopener noreferrer">Заполнить анкету <span aria-hidden="true">↗</span></a>
       <p class="hero-deadline"><strong>Обязательно для всех участников</strong>До 11 ноября, 20:00 МСК</p>
     </div>
     <div class="hero-actions">
@@ -191,7 +194,8 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
           <span class="arrow" aria-hidden="true">→</span>
           <div><time datetime="2026-11-13T23:40:00+03:00">23:40</time><span class="station">Кузнечное</span></div>
         </div>
-        <div class="train-foot"><span class="train-number">№ 6567 · 563 ₽</span><a href="https://rasp.yandex.ru/thread/R_6567_9602497_g25_4?departure_from=2026-11-13+20%3A35%3A00&amp;station_from=9602497&amp;station_to=9602748">Расписание ↗</a></div>
+        <div class="train-foot"><span class="train-number">№ 6567 · 563 ₽</span><a href="https://rasp.yandex.ru/thread/R_6567_9602497_g25_4?departure_from=2026-11-13+20%3A35%3A00&amp;station_from=9602497&amp;station_to=9602748" target="_blank" rel="noopener noreferrer">Расписание ↗</a></div>
+        <details class="train-stops-details"><summary>Остановки · 35</summary><ul class="stops" id="train-stops"></ul></details>
       </article>
       <article class="card">
         <header><h3>Обратно</h3><span class="date">Вс · 15 ноября</span></header>
@@ -200,16 +204,16 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
           <span class="arrow" aria-hidden="true">→</span>
           <div><time id="return-arrival" datetime="2026-11-15T21:50:00+03:00">21:50</time><span class="station">Финляндский вокзал</span></div>
         </div>
-        <div class="train-foot"><span class="train-number">№ 6568 · 563 ₽</span><a href="https://rasp.yandex.ru/thread/R_6568_9602748_g25_4?departure_from=2026-11-15+18%3A10%3A00&amp;station_from=9602748&amp;station_to=9602497">Расписание ↗</a></div>
+        <div class="train-foot"><span class="train-number">№ 6568 · 563 ₽</span><a href="https://rasp.yandex.ru/thread/R_6568_9602748_g25_4?departure_from=2026-11-15+18%3A10%3A00&amp;station_from=9602748&amp;station_to=9602497" target="_blank" rel="noopener noreferrer">Расписание ↗</a></div>
+        <details class="train-stops-details"><summary>Остановки · 35</summary><ul class="stops" id="return-train-stops"></ul></details>
       </article>
     </div>
-    <p class="after-train">Студентам действует скидка. Если садитесь по пути, согласуйте станцию с организатором.</p>
-    <details><summary>Остановки электрички туда</summary><ul class="stops" id="train-stops"></ul></details>
+    <p class="after-train">Обычный билет — 563 ₽ в одну сторону. Студентам очной формы — скидка 50%, ориентир 282 ₽ за поездку. <a href="https://transpb.ppk-piter.ru/passenger/benefits/regional/lo/" target="_blank" rel="noopener noreferrer">Условия льготы ↗</a> Если садитесь по пути, согласуйте станцию с организатором.</p>
   </section>
 
   <section id="track">
     <div class="section-head">
-      <div><span class="index">02 / Пешие маршруты</span><h2 id="track-title">От станции до «Горняка»</h2></div>
+      <div><span class="index">02 / Пешие маршруты</span><h2 id="track-title">От станции до стоянки</h2></div>
       <button class="button gpx" id="outbound-download" type="button">Скачать GPX <span aria-hidden="true">↓</span></button>
       <a class="button" id="return-download" href="./Gornyak-Kuznechnoe-12km.gpx" download hidden>Скачать GPX обратно <span aria-hidden="true">↓</span></a>
     </div>
@@ -279,7 +283,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
   <section id="registration">
     <div class="card registration">
       <div><span class="index">04 / Анкета участников</span><h3>Заполнить до 11 ноября, 20:00 МСК</h3></div>
-      <div><p>Каждому участнику нужно заполнить анкету один раз, чтобы куратор знал, как вы едете туда и обратно.</p><a class="button primary" href="https://docs.google.com/forms/d/e/1FAIpQLScF1kTkBOVCbH029de_U1eDoc0rSmfvN8daecf_QnBlP55_FQ/viewform">Заполнить анкету <span aria-hidden="true">↗</span></a></div>
+      <div><p>Каждому участнику нужно заполнить анкету один раз, чтобы куратор знал, как вы едете туда и обратно.</p><a class="button primary" href="https://docs.google.com/forms/d/e/1FAIpQLScF1kTkBOVCbH029de_U1eDoc0rSmfvN8daecf_QnBlP55_FQ/viewform" target="_blank" rel="noopener noreferrer">Заполнить анкету <span aria-hidden="true">↗</span></a></div>
     </div>
   </section>
 </main>
@@ -886,17 +890,37 @@ const stations = [
   ['Отрадное','22:57'],['Мюллюпельто','23:06'],['пл. Синёво','23:11'],['Приозерск','23:20'],
   ['пл. Капеасалми (148 км)','23:27'],['пл. Боровое (152 км)','23:32'],['Кузнечное','23:40']
 ];
-const trainStops = document.querySelector('#train-stops');
-for (const [name, clock] of stations) {
-  const row = document.createElement('li');
-  const label = document.createElement('span');
-  label.textContent = name;
-  const time = document.createElement('time');
-  time.dateTime = '2026-11-13T' + clock + ':00+03:00';
-  time.textContent = clock;
-  row.append(label, time);
-  trainStops.append(row);
+const returnStations = [
+  ['Кузнечное','18:10'],
+  ['пл. Боровое (152 км)','18:15–18:16'],['пл. Капеасалми (148 км)','18:21–18:22'],
+  ['Приозерск','18:28–18:29'],['пл. Синёво','18:37–18:38'],['Мюллюпельто','18:44–18:57'],
+  ['Отрадное','19:06–19:20'],['пл. Суходолье','19:25–19:26'],['Громово','19:31–19:32'],
+  ['пл. Лосево','19:38–19:39'],['пл. Петяярви','19:48–19:49'],['пл. Колосково (79 км)','19:54–19:55'],
+  ['Сосново','19:59–20:00'],['пл. Никитино (69 км)','20:07–20:08'],['пл. 67 км','20:10–20:11'],
+  ['Орехово','20:13–20:14'],['пл. Лемболово','20:20–20:21'],['пл. Лемболовское Озеро (54 км)','20:24–20:25'],
+  ['Васкелово','20:27–20:28'],['пл. Лаппелово (47 км)','20:32–20:33'],['Грузино','20:35–20:36'],
+  ['пл. Лесколово (39 км)','20:40–20:41'],['Пери','20:46–20:47'],['пл. Осельки','20:52–20:53'],
+  ['пл. Кавголово','20:58–20:59'],['Токсово','21:03–21:04'],['пл. Кузьмолово','21:08–21:09'],
+  ['Капитолово','21:11–21:12'],['пл. Лаврики','21:15–21:16'],['Девяткино','21:19–21:20'],
+  ['пл. Новая Охта (Мурино)','21:23–21:24'],['Ручьи','21:29–21:30'],
+  ['Пискарёвка','21:33–21:35'],['Кушелевка','21:41–21:42'],
+  ['Санкт-Петербург (Финляндский вокзал)','21:50']
+];
+function renderStops(list, target, date) {
+  for (const [name, clock] of list) {
+    const row = document.createElement('li');
+    const label = document.createElement('span');
+    label.textContent = name;
+    const time = document.createElement('time');
+    const boardingTime = clock.includes('–') ? clock.split('–').at(-1) : clock;
+    time.dateTime = date + 'T' + boardingTime + ':00+03:00';
+    time.textContent = clock;
+    row.append(label, time);
+    target.append(row);
+  }
 }
+renderStops(stations, document.querySelector('#train-stops'), '2026-11-13');
+renderStops(returnStations, document.querySelector('#return-train-stops'), '2026-11-15');
 
 const gpx = document.querySelector('#gpx-data').textContent.trim();
 const gpxDocument = new DOMParser().parseFromString(gpx, 'application/xml');
@@ -922,7 +946,7 @@ const returnPoints = [
   {tag:'Ф',title:'Станция Кузнечное',km:totalKm,coordinates:waypoints[0],description:'Целевой ориентир — 17:30 МСК. Электричка № 6568 в 18:10.'}
 ];
 const routes = {
-  outbound:{track:outboundTrack,points:outboundPoints,start:23*60+50,day:13,duration:330,title:'От станции до «Горняка»',note:'Бегунок показывает примерный график на 5,5 часа. Для расчёта взят старт в 23:50 и два плановых привала. Фактическое время зависит от темпа группы.'},
+  outbound:{track:outboundTrack,points:outboundPoints,start:23*60+50,day:13,duration:330,title:'От станции до стоянки',note:'Бегунок показывает примерный график на 5,5 часа. Для расчёта взят старт в 23:50 и два плановых привала. Фактическое время зависит от темпа группы.'},
   back:{track:[...outboundTrack].reverse(),points:returnPoints,start:13*60,day:15,duration:270,title:'От «Горняка» до Кузнечного',note:'Бегунок показывает целевой график на 4,5 часа, включая два коротких привала. При переходе за 5 часов прибудем в 18:00, за 10 минут до электрички.'}
 };
 const formatKm = km => new Intl.NumberFormat('ru-RU', {minimumFractionDigits:2,maximumFractionDigits:2}).format(km) + ' км';

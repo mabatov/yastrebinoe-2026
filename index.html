@@ -44,6 +44,7 @@ h2{font-size:clamp(27px,5vw,49px);line-height:1.05;letter-spacing:-.045em}
 h3{line-height:1.2}
 .hero p{color:var(--muted);max-width:430px;font-size:clamp(16px,2vw,19px)}
 .hero-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:25px}
+.hero .hero-deadline{margin-top:9px;font-size:13px}
 .hero-tag{position:absolute;right:20px;bottom:16px;color:var(--muted);font:10px var(--mono);letter-spacing:.1em}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:var(--radius);margin-top:12px;background:var(--panel)}
 .stat{padding:16px clamp(10px,3vw,28px)}
@@ -120,6 +121,7 @@ summary{cursor:pointer;padding:12px 16px;font-weight:650}
 .return p,.registration p{color:var(--muted)}
 .return .hero-actions{margin-top:13px}
 .registration .button{justify-self:start}
+.registration p{margin:7px 0 12px}
 footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:40px;padding:16px 0 24px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
 @media(max-width:760px){.map-layout{grid-template-columns:1fr}.stops{grid-template-columns:repeat(2,minmax(0,1fr))}.topbar nav{display:none}.section-head{align-items:start}.section-head p{font-size:13px}.hero-tag{display:none}}
 @media(max-width:540px){.wrap{width:calc(100% - 28px)}.hero{min-height:0;padding:26px 16px}.hero::after{background:linear-gradient(90deg,var(--panel) 0%,var(--panel) 37%,transparent 125%)}.train-grid,.return,.registration,.stops{grid-template-columns:1fr}.section-head{flex-wrap:wrap;gap:9px}.map-tools{padding:8px}.map-caption{font-size:9px}.stat-label{font-size:9px}.theme{padding:8px 10px}}
@@ -133,7 +135,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
     <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="16" cy="16" r="13"/><path d="M20.6 11.4 18 18l-6.6 2.6L14 14zM16 1v4m0 22v4M1 16h4m22 0h4"/></svg>
     Горняк / Ноябрьский выезд
   </a>
-  <nav aria-label="Разделы"><a href="#trains">Электрички</a><a href="#track">Карта</a><a href="#return">Обратно</a></nav>
+  <nav aria-label="Разделы"><a href="#trains">Электрички</a><a href="#track">Карта</a><a href="#return">Обратно</a><a href="#registration">Анкета</a></nav>
   <button type="button" class="theme" id="theme" aria-label="Включить светлую тему"><span aria-hidden="true" id="theme-icon">☼</span><span id="theme-label">Светлая</span></button>
 </header>
 
@@ -144,9 +146,11 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
     <h1>Ястребиное</h1>
     <p>В пятницу вечером едем до Кузнечного и идём по Хошиминке к стоянке «Горняк». В воскресенье возвращаемся вместе.</p>
     <div class="hero-actions">
-      <a class="button primary" href="#track">Карта маршрута <span aria-hidden="true">↓</span></a>
+      <a class="button primary" href="https://docs.google.com/forms/d/e/1FAIpQLScF1kTkBOVCbH029de_U1eDoc0rSmfvN8daecf_QnBlP55_FQ/viewform">Заполнить анкету <span aria-hidden="true">↗</span></a>
+      <a class="button" href="#track">Карта маршрута <span aria-hidden="true">↓</span></a>
       <button class="button gpx" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v4h14v-4"/></svg>Скачать GPX</button>
     </div>
+    <p class="hero-deadline">Анкета для всех участников · до 11 ноября, 20:00 МСК</p>
     <div class="hero-tag">61°09′49.6″ N · 29°43′12.2″ E</div>
   </div>
   <div class="stats" aria-label="Маршрут в цифрах">
@@ -251,7 +255,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
   <section id="registration">
     <div class="card registration">
       <div><span class="index">04 / Анкета участников</span><h3>Заполнить до 11 ноября, 20:00 МСК</h3></div>
-      <div><p id="registration-pending">Ссылка появится, когда анкета будет готова.</p><a class="button primary" id="registration-link" hidden>Заполнить анкету ↗</a></div>
+      <div><p>Заполните анкету один раз, чтобы куратор знал, как вы едете туда и обратно.</p><a class="button primary" href="https://docs.google.com/forms/d/e/1FAIpQLScF1kTkBOVCbH029de_U1eDoc0rSmfvN8daecf_QnBlP55_FQ/viewform">Заполнить анкету <span aria-hidden="true">↗</span></a></div>
     </div>
   </section>
 </main>
@@ -809,18 +813,6 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
 </script>
 <script>
 'use strict';
-
-// Сюда подставляется опубликованная ссылка для участников.
-const FORM_URL = '';
-if (FORM_URL) {
-  const link = document.querySelector('#registration-link');
-  link.href = FORM_URL;
-  link.hidden = false;
-  document.querySelector('#registration-pending').hidden = true;
-  const heroLink = link.cloneNode(true);
-  heroLink.removeAttribute('id');
-  document.querySelector('.hero-actions').prepend(heroLink);
-}
 
 const themeButton = document.querySelector('#theme');
 function setTheme(theme) {

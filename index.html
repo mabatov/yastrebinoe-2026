@@ -135,8 +135,8 @@ summary{cursor:pointer;padding:12px 16px;font-weight:650}
 .map-marker .rest-cup{fill:none;stroke:var(--text);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .walker-icon,.rest-icon,.stop-icon{background:transparent;border:0}
 .walker-icon span,.rest-icon span{display:grid;place-items:center;width:32px;height:32px;border:2px solid var(--panel);border-radius:50%;box-shadow:0 1px 5px #0008}
-.walker-icon span{background:var(--walker)}
-.walker-icon svg{width:20px;height:20px;fill:#fff}
+.walker-icon img{display:block;width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 1px 2px #000b)}
+.walker-icon.outbound img{transform:scaleX(-1)}
 .rest-icon span{width:26px;height:26px;background:var(--rest)}
 .rest-icon svg{width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .stop-icon span{display:grid;place-items:center;width:24px;height:24px;border:2px solid var(--text);border-radius:50%;background:var(--panel);color:var(--text);font:700 9px var(--mono);box-shadow:0 1px 4px #0008}
@@ -277,7 +277,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
             <polyline id="route-shadow" fill="none" stroke="var(--bg)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
             <polyline id="route-line" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
             <g id="scheme-points"></g>
-            <g id="scheme-position" pointer-events="none"><circle r="10" fill="var(--walker)" stroke="var(--text)" stroke-width="2"/><path d="M-4-6h4v4l2 1.5v2.5h-7v-2l1-1.5z" fill="#fff" transform="rotate(-25)"/></g>
+            <g id="scheme-position" pointer-events="none"><image id="scheme-boot" href="./assets/boot.png" x="-15" y="-15" width="30" height="30"/></g>
           </svg></div>
         </div>
         <p class="map-hint" id="map-hint" hidden>Перетащите схему или перемещайте её стрелками на клавиатуре.</p>
@@ -985,15 +985,7 @@ if (window.L) {
   });
   routeLine = L.polyline(activeRoute.track, {color:getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), weight:5, opacity:.95, lineCap:'round', lineJoin:'round'}).addTo(liveMap);
   routePointLayer = L.layerGroup().addTo(liveMap);
-  positionMarker = L.marker(activeRoute.track[0], {
-    icon:L.divIcon({
-      className:'walker-icon',
-      html:'<span aria-label="Положение по бегунку"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h5v6l2.5 2.5 4.5 2V17H5v-3l2-2z"/></svg></span>',
-      iconSize:[32,32],
-      iconAnchor:[16,16]
-    }),
-    zIndexOffset:1000
-  }).addTo(liveMap);
+  positionMarker = L.marker(activeRoute.track[0], {icon:walkerIcon(false),zIndexOffset:1000}).addTo(liveMap);
   liveMap.fitBounds(L.latLngBounds(activeRoute.track), {padding:[28,28]});
   liveMap.on('zoomend', syncMapControls);
   liveMap.whenReady(() => setTimeout(() => liveMap.invalidateSize(), 150));
@@ -1002,6 +994,14 @@ if (window.L) {
   }, 8000);
 } else {
   showMapFallback('Интерактивная карта не загрузилась. Показана схема маршрута.');
+}
+function walkerIcon(isReturn) {
+  return L.divIcon({
+    className:'walker-icon'+(isReturn ? '' : ' outbound'),
+    html:'<img src="./assets/boot.png" alt="">',
+    iconSize:[44,44],
+    iconAnchor:[22,22]
+  });
 }
 function updateLeafletColors() {
   if (!liveMap) return;
@@ -1256,6 +1256,8 @@ function setDirection(direction) {
     positionMarker.setLatLng(activeRoute.track[0]);
   }
   const isReturn = direction === 'back';
+  document.querySelector('#scheme-boot').setAttribute('transform',isReturn ? '' : 'scale(-1 1)');
+  if (liveMap) positionMarker.setIcon(walkerIcon(isReturn));
   document.querySelector('#outbound-map').setAttribute('aria-pressed', !isReturn);
   document.querySelector('#return-map').setAttribute('aria-pressed', isReturn);
   document.querySelector('#outbound-download').hidden = isReturn;

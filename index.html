@@ -1051,6 +1051,7 @@ function updatePosition() {
   const coordinate = coordinateAt(km);
   if (positionMarker && liveMap) {
     positionMarker.setLatLng(coordinate);
+    positionMarker.bringToFront();
     liveMap.panInside(coordinate, {padding:[24,24]});
   }
   const [x,y] = project(coordinate);
@@ -1125,6 +1126,7 @@ function renderPoints() {
       point.mapMarker = mapMarker;
     }
   }
+  if (positionMarker) positionMarker.bringToFront();
 }
 
 const schematic = document.querySelector('#schematic');

@@ -133,13 +133,21 @@ summary{cursor:pointer;padding:12px 16px;font-weight:650}
 .map-marker{cursor:pointer}
 .map-marker .rest-cup{fill:none;stroke:var(--text);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .map-marker .start-pole{fill:none;stroke:var(--text);stroke-width:2.2;stroke-linecap:round;filter:drop-shadow(0 1px 1px #000b)}
+.map-marker .finish-pole{fill:none;stroke:var(--text);stroke-width:2.4;stroke-linecap:round;filter:drop-shadow(0 1px 1px #000b)}
+.map-marker .finish-border{fill:var(--accent);stroke:var(--text);stroke-width:.9}
+.map-marker .finish-dark{fill:#182019;stroke:none}
+.map-marker .finish-light{fill:#fff8e6;stroke:none}
 .map-marker .start-pennant{fill:#ed493f;stroke:#8e231f;stroke-width:1.2;stroke-linejoin:round;filter:drop-shadow(0 1px 2px #000b)}
 .walker-icon,.rest-icon,.finish-icon,.start-icon,.stop-icon{background:transparent;border:0}
 .walker-icon span{display:grid;place-items:center;width:32px;height:32px;border:2px solid var(--panel);border-radius:50%;box-shadow:0 1px 5px #0008}
-.walker-icon img{display:block;width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 1px 2px #000b)}
+.walker-icon img{display:block;width:38px;height:38px;object-fit:contain;filter:drop-shadow(0 1px 2px #000b)}
 .walker-icon.outbound img{transform:scaleX(-1)}
 .finish-icon span,.start-icon span{display:grid;place-items:center;width:34px;height:34px;background:transparent;filter:drop-shadow(0 2px 2px #000b)}
-.finish-icon img{width:30px;height:30px;object-fit:contain}
+.finish-icon svg{display:block;width:40px;height:40px;overflow:visible}
+.finish-icon .finish-pole{fill:none;stroke:var(--text);stroke-width:2.5;stroke-linecap:round}
+.finish-icon .finish-border{fill:var(--accent);stroke:var(--text);stroke-width:1.2}
+.finish-icon .finish-dark{fill:#182019}
+.finish-icon .finish-light{fill:#fff8e6}
 .start-icon svg{display:block;width:28px;height:32px;overflow:visible}
 .start-icon .pole{stroke:#f4eee0;stroke-width:2.2;stroke-linecap:round}
 .start-icon .pennant{fill:#ed493f;stroke:#8e231f;stroke-width:1}
@@ -1004,8 +1012,8 @@ function walkerIcon(isReturn) {
   return L.divIcon({
     className:'walker-icon'+(isReturn ? '' : ' outbound'),
     html:'<img src="./assets/boot.png" alt="">',
-    iconSize:[44,44],
-    iconAnchor:[22,22]
+    iconSize:[38,38],
+    iconAnchor:[19,19]
   });
 }
 function updateLeafletColors() {
@@ -1141,7 +1149,10 @@ function renderPoints() {
       marker.append(svg('path',{d:'M -4 12 V -12',class:'start-pole'}));
       marker.append(svg('path',{d:'M -3 -11 H 10 L 4 -5 H -3 Z',class:'start-pennant'}));
     } else if (isFinish) {
-      marker.append(svg('image',{href:'./assets/finish-flag.png',x:-14,y:-14,width:28,height:28}));
+      marker.append(svg('path',{d:'M -5 13 V -13',class:'finish-pole'}));
+      marker.append(svg('rect',{x:-4,y:-12,width:20,height:16,rx:1,class:'finish-border'}));
+      marker.append(svg('path',{class:'finish-dark',d:'M -3.5 -11 h4.5 v5 h-4.5 z M 5.5 -11 h4.5 v5 h-4.5 z M 1 -6 h4.5 v5 H 1 z M 10 -6 h5 v5 h-5 z M -3.5 -1 h4.5 v4 h-4.5 z M 5.5 -1 h4.5 v4 h-4.5 z'}));
+      marker.append(svg('path',{class:'finish-light',d:'M 1 -11 h4.5 v5 H 1 z M 10 -11 h5 v5 h-5 z M -3.5 -6 h4.5 v5 h-4.5 z M 5.5 -6 h4.5 v5 h-4.5 z M 1 -1 h4.5 v4 H 1 z M 10 -1 h5 v4 h-5 z'}));
     } else {
       marker.append(svg('circle',{r:11}));
       const label = svg('text',{x:x>450 ? -16 : 16,y:4,'text-anchor':x>450 ? 'end' : 'start'});
@@ -1167,9 +1178,9 @@ function renderPoints() {
         iconAnchor:[10,28]
       }) : isFinish ? L.divIcon({
         className:'finish-icon',
-        html:'<span aria-label="Финиш"><img src="./assets/finish-flag.png" alt=""></span>',
-        iconSize:[34,36],
-        iconAnchor:[17,18]
+        html:'<span aria-label="Финиш"><svg viewBox="0 0 40 40" aria-hidden="true"><path class="finish-pole" d="M7 36V3"/><rect class="finish-border" x="9" y="4" width="24" height="19" rx="1.5"/><path class="finish-dark" d="M10 5h5.5v5H10zm11 0h5.5v5H21zm-5.5 5h5.5v5h-5.5zm11 0H32v5h-5.5zM10 15h5.5v6H10zm11 0h5.5v6H21z"/><path class="finish-light" d="M15.5 5H21v5h-5.5zm11 0H32v5h-5.5zM10 10h5.5v5H10zm11 0h5.5v5H21zm5.5 5H32v6h-5.5zm-11 0H21v6h-5.5z"/></svg></span>',
+        iconSize:[40,40],
+        iconAnchor:[7,36]
       }) : L.divIcon({
         className:'stop-icon',
         html:'<span>'+point.tag+'</span>',

@@ -144,6 +144,7 @@ summary{cursor:pointer;padding:12px 16px;font-weight:650}
 .start-icon .pole{stroke:#f4eee0;stroke-width:2.2;stroke-linecap:round}
 .start-icon .pennant{fill:#ed493f;stroke:#8e231f;stroke-width:1}
 .stop-icon span{display:grid;place-items:center;width:24px;height:24px;border:2px solid var(--text);border-radius:50%;background:var(--panel);color:var(--text);font:700 9px var(--mono);box-shadow:0 1px 4px #0008}
+.stop-icon.selected span{border-color:var(--accent);background:var(--accent);color:var(--ink)}
 .map-marker text{font:700 14px var(--mono);fill:var(--text);paint-order:stroke;stroke:var(--map);stroke-width:4;stroke-linejoin:round}
 .map-marker circle{fill:var(--panel);stroke:var(--accent);stroke-width:2}
 .map-marker.selected circle,.map-marker:hover circle{fill:var(--accent)}
@@ -1092,7 +1093,10 @@ function setSelectedPoint(point) {
     const active = item === point;
     item.button.setAttribute('aria-pressed', active);
     item.schemeMarker.classList.toggle('selected', active);
-    if (item.mapMarker) item.mapMarker.setStyle({radius:active ? 8 : 6, fillOpacity:1, weight:active ? 3 : 2});
+    if (item.mapMarker) {
+      const iconElement = item.mapMarker.getElement();
+      if (iconElement) iconElement.classList.toggle('selected', active);
+    }
   }
   document.querySelector('#point-detail p').textContent = point.description;
 }

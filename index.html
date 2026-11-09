@@ -963,6 +963,7 @@ for (const route of Object.values(routes)) {
   route.movingMinutes = route.duration - route.restPoints.reduce((sum, point) => sum + point.rest, 0);
 }
 let activeRoute = routes.outbound;
+let selectedPoint = null;
 const mapHost = document.querySelector('#live-map');
 const mapFallback = document.querySelector('#map-fallback');
 const mapMessage = document.querySelector('#map-message');
@@ -1084,17 +1085,26 @@ function updatePosition() {
   document.querySelector('#walk-clock').textContent = '≈ ' + clock + ' МСК';
   slider.setAttribute('aria-valuetext', distance + ', около ' + clock + ' МСК, ' + dayAt(minute) + ' ноября' + (rest ? ', привал ' + rest.tag : ''));
 }
-slider.addEventListener('input', updatePosition);
-function selectPoint(point) {
-  slider.value = Math.round(minuteAt(point.km));
+function setSelectedPoint(point) {
+  if (!point || selectedPoint === point) return;
+  selectedPoint = point;
   for (const item of activeRoute.points) {
     const active = item === point;
     item.button.setAttribute('aria-pressed', active);
     item.schemeMarker.classList.toggle('selected', active);
     if (item.mapMarker) item.mapMarker.setStyle({radius:active ? 8 : 6, fillOpacity:1, weight:active ? 3 : 2});
   }
-  const detail = document.querySelector('#point-detail');
-  detail.querySelector('p').textContent = point.description;
+  document.querySelector('#point-detail p').textContent = point.description;
+}
+slider.addEventListener('input', () => {
+  updatePosition();
+  const km = atMinute(Number(slider.value)).km;
+  const reachedPoint = [...activeRoute.points].reverse().find(point => point.km <= km) || activeRoute.points[0];
+  setSelectedPoint(reachedPoint);
+});
+function selectPoint(point) {
+  slider.value = Math.round(minuteAt(point.km));
+  setSelectedPoint(point);
   updatePosition();
 }
 function renderPoints() {

@@ -133,12 +133,13 @@ summary{cursor:pointer;padding:12px 16px;font-weight:650}
 .map-marker{cursor:pointer}
 .map-marker.rest-stop circle{fill:var(--rest);stroke:var(--text)}
 .map-marker .rest-cup{fill:none;stroke:var(--text);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.walker-icon,.rest-icon,.stop-icon{background:transparent;border:0}
-.walker-icon span,.rest-icon span{display:grid;place-items:center;width:32px;height:32px;border:2px solid var(--panel);border-radius:50%;box-shadow:0 1px 5px #0008}
+.walker-icon,.rest-icon,.finish-icon,.stop-icon{background:transparent;border:0}
+.walker-icon span{display:grid;place-items:center;width:32px;height:32px;border:2px solid var(--panel);border-radius:50%;box-shadow:0 1px 5px #0008}
 .walker-icon img{display:block;width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 1px 2px #000b)}
 .walker-icon.outbound img{transform:scaleX(-1)}
-.rest-icon span{width:26px;height:26px;background:var(--rest)}
-.rest-icon svg{width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.rest-icon span,.finish-icon span{display:grid;place-items:center;width:32px;height:32px;border:2px solid #fff;border-radius:50%;background:#fff;box-shadow:0 1px 5px #0008}
+.rest-icon img{width:28px;height:28px;object-fit:contain}
+.finish-icon img{width:27px;height:27px;object-fit:contain}
 .stop-icon span{display:grid;place-items:center;width:24px;height:24px;border:2px solid var(--text);border-radius:50%;background:var(--panel);color:var(--text);font:700 9px var(--mono);box-shadow:0 1px 4px #0008}
 .map-marker text{font:700 14px var(--mono);fill:var(--text);paint-order:stroke;stroke:var(--map);stroke-width:4;stroke-linejoin:round}
 .map-marker circle{fill:var(--panel);stroke:var(--accent);stroke-width:2}
@@ -1119,9 +1120,11 @@ function renderPoints() {
 
     const [x,y] = project(point.coordinates);
     const isRest = point.tag.startsWith('П');
+    const isFinish = point.tag === 'Ф';
     const marker = svg('g', {class:'map-marker'+(isRest ? ' rest-stop' : ''),transform:'translate('+x+' '+y+')',role:'button',tabindex:'0','aria-label':point.title});
     marker.append(svg('circle',{r:11}));
-    if (isRest) marker.append(svg('path',{class:'rest-cup',d:'M-5 -4h7v5a3 3 0 0 1-7 0z M2 -2h2a2 2 0 0 1 0 4H2 M-3 -7v1 M0 -7v1'}));
+    if (isRest) marker.append(svg('image',{href:'./assets/rest-marker.png',x:-10,y:-10,width:20,height:20}));
+    if (isFinish) marker.append(svg('image',{href:'./assets/finish-flag.png',x:-12,y:-12,width:24,height:24}));
     const rightOfCenter = x > 450;
     const label = svg('text',{x:rightOfCenter ? -16 : 16,y:4,'text-anchor':rightOfCenter ? 'end' : 'start'});
     label.textContent = point.tag;
@@ -1138,11 +1141,17 @@ function renderPoints() {
     if (routePointLayer) {
       const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
       const isRest = point.tag.startsWith('П');
+      const isFinish = point.tag === 'Ф';
       const icon = isRest ? L.divIcon({
         className:'rest-icon',
-        html:'<span aria-label="Привал"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h11v7a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4zM16 9h2a3 3 0 0 1 0 6h-2M8 3v2M12 3v2"/></svg></span>',
-        iconSize:[26,26],
-        iconAnchor:[13,13]
+        html:'<span aria-label="Привал"><img src="./assets/rest-marker.png" alt=""></span>',
+        iconSize:[32,32],
+        iconAnchor:[16,16]
+      }) : isFinish ? L.divIcon({
+        className:'finish-icon',
+        html:'<span aria-label="Финиш"><img src="./assets/finish-flag.png" alt=""></span>',
+        iconSize:[32,32],
+        iconAnchor:[16,16]
       }) : L.divIcon({
         className:'stop-icon',
         html:'<span>'+point.tag+'</span>',

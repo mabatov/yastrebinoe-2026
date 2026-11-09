@@ -13,8 +13,8 @@ try {
 } catch {}
 </script>
 <style>
-:root{color-scheme:dark;--bg:#171e19;--panel:#1e2820;--panel2:#252f25;--text:#f3f0dc;--muted:#b1baaa;--line:#455246;--accent:#ffc367;--walker:#00b7c7;--ink:#271e11;--grid:#9aad8840;--map:#242f26;--mapline:#788a72;--note:#ffc36712;--radius:14px;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
-:root[data-theme="light"]{color-scheme:light;--bg:#f1eee4;--panel:#faf7ed;--panel2:#e9e8db;--text:#242d24;--muted:#49574b;--line:#aeb4a4;--accent:#99490f;--walker:#008b98;--ink:#fffaf0;--grid:#596c4b43;--map:#e2e7d6;--mapline:#78886b;--note:#ba650b13}
+:root{color-scheme:dark;--bg:#171e19;--panel:#1e2820;--panel2:#252f25;--text:#f3f0dc;--muted:#b1baaa;--line:#455246;--accent:#ffc367;--walker:#00b7c7;--rest:#78b86c;--ink:#271e11;--grid:#9aad8840;--map:#242f26;--mapline:#788a72;--note:#ffc36712;--radius:14px;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
+:root[data-theme="light"]{color-scheme:light;--bg:#f1eee4;--panel:#faf7ed;--panel2:#e9e8db;--text:#242d24;--muted:#49574b;--line:#aeb4a4;--accent:#99490f;--walker:#008b98;--rest:#397a43;--ink:#fffaf0;--grid:#596c4b43;--map:#e2e7d6;--mapline:#78886b;--note:#ba650b13}
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:20px}
 body{position:relative;isolation:isolate;margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,sans-serif}
@@ -131,6 +131,15 @@ summary{cursor:pointer;padding:12px 16px;font-weight:650}
 [data-theme="light"] .base-water{fill:#a4ccd1;stroke:#5d929a}
 [data-theme="light"] .base-quarry{fill:#e0c7a6;stroke:#a18464}
 .map-marker{cursor:pointer}
+.map-marker.rest-stop circle{fill:var(--rest);stroke:var(--text)}
+.map-marker .rest-cup{fill:none;stroke:var(--text);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.walker-icon,.rest-icon,.stop-icon{background:transparent;border:0}
+.walker-icon span,.rest-icon span{display:grid;place-items:center;width:32px;height:32px;border:2px solid var(--panel);border-radius:50%;box-shadow:0 1px 5px #0008}
+.walker-icon span{background:var(--walker)}
+.walker-icon svg{width:20px;height:20px;fill:#fff}
+.rest-icon span{width:26px;height:26px;background:var(--rest)}
+.rest-icon svg{width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.stop-icon span{display:grid;place-items:center;width:24px;height:24px;border:2px solid var(--text);border-radius:50%;background:var(--panel);color:var(--text);font:700 9px var(--mono);box-shadow:0 1px 4px #0008}
 .map-marker text{font:700 14px var(--mono);fill:var(--text);paint-order:stroke;stroke:var(--map);stroke-width:4;stroke-linejoin:round}
 .map-marker circle{fill:var(--panel);stroke:var(--accent);stroke-width:2}
 .map-marker.selected circle,.map-marker:hover circle{fill:var(--accent)}
@@ -268,7 +277,7 @@ footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin
             <polyline id="route-shadow" fill="none" stroke="var(--bg)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
             <polyline id="route-line" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
             <g id="scheme-points"></g>
-            <circle id="scheme-position" r="7" fill="var(--walker)" stroke="var(--text)" stroke-width="2" pointer-events="none"/>
+            <g id="scheme-position" pointer-events="none"><circle r="10" fill="var(--walker)" stroke="var(--text)" stroke-width="2"/><path d="M-4-6h4v4l2 1.5v2.5h-7v-2l1-1.5z" fill="#fff" transform="rotate(-25)"/></g>
           </svg></div>
         </div>
         <p class="map-hint" id="map-hint" hidden>Перетащите схему или перемещайте её стрелками на клавиатуре.</p>
@@ -976,7 +985,15 @@ if (window.L) {
   });
   routeLine = L.polyline(activeRoute.track, {color:getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(), weight:5, opacity:.95, lineCap:'round', lineJoin:'round'}).addTo(liveMap);
   routePointLayer = L.layerGroup().addTo(liveMap);
-  positionMarker = L.circleMarker(activeRoute.track[0], {radius:8, color:getComputedStyle(document.documentElement).getPropertyValue('--panel').trim(), weight:3, fillColor:getComputedStyle(document.documentElement).getPropertyValue('--walker').trim(), fillOpacity:1}).addTo(liveMap);
+  positionMarker = L.marker(activeRoute.track[0], {
+    icon:L.divIcon({
+      className:'walker-icon',
+      html:'<span aria-label="Положение по бегунку"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h5v6l2.5 2.5 4.5 2V17H5v-3l2-2z"/></svg></span>',
+      iconSize:[32,32],
+      iconAnchor:[16,16]
+    }),
+    zIndexOffset:1000
+  }).addTo(liveMap);
   liveMap.fitBounds(L.latLngBounds(activeRoute.track), {padding:[28,28]});
   liveMap.on('zoomend', syncMapControls);
   liveMap.whenReady(() => setTimeout(() => liveMap.invalidateSize(), 150));
@@ -990,7 +1007,7 @@ function updateLeafletColors() {
   if (!liveMap) return;
   const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
   routeLine.setStyle({color:accent});
-  positionMarker.setStyle({fillColor:getComputedStyle(document.documentElement).getPropertyValue('--walker').trim(), color:getComputedStyle(document.documentElement).getPropertyValue('--panel').trim()});
+  positionMarker.setZIndexOffset(1000);
   for (const point of activeRoute.points) {
     if (point.mapMarker) point.mapMarker.setStyle({color:accent, fillColor:accent});
   }
@@ -1051,13 +1068,12 @@ function updatePosition() {
   const coordinate = coordinateAt(km);
   if (positionMarker && liveMap) {
     positionMarker.setLatLng(coordinate);
-    positionMarker.bringToFront();
+    positionMarker.setZIndexOffset(1000);
     liveMap.panInside(coordinate, {padding:[24,24]});
   }
   const [x,y] = project(coordinate);
   const marker = document.querySelector('#scheme-position');
-  marker.setAttribute('cx',x);
-  marker.setAttribute('cy',y);
+  marker.setAttribute('transform','translate('+x+' '+y+')');
   keepMapMarkerVisible(x,y);
   const distance = formatKm(km);
   const clock = displayClock(minute);
@@ -1102,8 +1118,10 @@ function renderPoints() {
     point.button = button;
 
     const [x,y] = project(point.coordinates);
-    const marker = svg('g', {class:'map-marker',transform:'translate('+x+' '+y+')',role:'button',tabindex:'0','aria-label':point.title});
+    const isRest = point.tag.startsWith('П');
+    const marker = svg('g', {class:'map-marker'+(isRest ? ' rest-stop' : ''),transform:'translate('+x+' '+y+')',role:'button',tabindex:'0','aria-label':point.title});
     marker.append(svg('circle',{r:11}));
+    if (isRest) marker.append(svg('path',{class:'rest-cup',d:'M-5 -4h7v5a3 3 0 0 1-7 0z M2 -2h2a2 2 0 0 1 0 4H2 M-3 -7v1 M0 -7v1'}));
     const rightOfCenter = x > 450;
     const label = svg('text',{x:rightOfCenter ? -16 : 16,y:4,'text-anchor':rightOfCenter ? 'end' : 'start'});
     label.textContent = point.tag;
@@ -1119,14 +1137,26 @@ function renderPoints() {
     point.schemeMarker = marker;
     if (routePointLayer) {
       const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
-      const mapMarker = L.circleMarker(point.coordinates, {radius:6, color:accent, weight:2, fillColor:accent, fillOpacity:1});
-      mapMarker.bindTooltip(point.tag, {permanent:true, direction:'right', className:'route-label', offset:[5,0]});
+      const isRest = point.tag.startsWith('П');
+      const icon = isRest ? L.divIcon({
+        className:'rest-icon',
+        html:'<span aria-label="Привал"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h11v7a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4zM16 9h2a3 3 0 0 1 0 6h-2M8 3v2M12 3v2"/></svg></span>',
+        iconSize:[26,26],
+        iconAnchor:[13,13]
+      }) : L.divIcon({
+        className:'stop-icon',
+        html:'<span>'+point.tag+'</span>',
+        iconSize:[24,24],
+        iconAnchor:[12,12]
+      });
+      const mapMarker = L.marker(point.coordinates, {icon});
+      mapMarker.bindTooltip(point.tag, {permanent:true, direction:'right', className:'route-label', offset:[8,0]});
       mapMarker.on('click', () => selectPoint(point));
       routePointLayer.addLayer(mapMarker);
       point.mapMarker = mapMarker;
     }
   }
-  if (positionMarker) positionMarker.bringToFront();
+  if (positionMarker) positionMarker.setZIndexOffset(1000);
 }
 
 const schematic = document.querySelector('#schematic');
